@@ -20,16 +20,16 @@ function Actor:getCenter()
 end
 
 function Actor:attack()
-    
+
 end
 function Actor:moveLeft()
-    
+
 end
 function Actor:moveRight()
-    
+
 end
 function Actor:jump()
-    
+
 end
 
 -- collision resolution handler
@@ -54,7 +54,7 @@ function Actor:update(dt)
 end
 
 function Actor:draw()
-    
+
 end
 
 
@@ -63,6 +63,7 @@ local Player = oo.class(Actor)
 function Player:init(x, y)
     Actor.init(self, x, y, 10, 10)
     self.ay = 400
+    self.controller = HumanController.new(self)
 end
 
 function Player:update(dt)

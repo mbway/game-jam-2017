@@ -2,11 +2,11 @@ local baton = require "external.baton"
 local input = {}
 
 local controls = {
-    left  = {'key:left',  'axis:leftx-', 'button:dpleft'},
-    right = {'key:right', 'axis:leftx+', 'button:dpright'},
-    up    = {'key:up',    'axis:lefty-', 'button:dpup'},
-    down  = {'key:down',  'axis:lefty+', 'button:dpdown'},
-    shoot = {'key:x',     'button:a'}
+    left    = {'key:left',  'axis:leftx-', 'button:dpleft'},
+    right   = {'key:right', 'axis:leftx+', 'button:dpright'},
+    jump    = {'key:x',     'button:a'},
+    attack  = {'key:c',     'button:x'},
+    special = {'key:c',     'button:b'}
 }
 
 function input.init()
