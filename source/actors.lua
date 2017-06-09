@@ -1,3 +1,4 @@
+local HumanController = require "HumanController"
 local Actor = oo.class()
 
 function Actor:init(x, y, w, h)

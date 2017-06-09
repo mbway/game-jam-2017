@@ -5,15 +5,15 @@ function HumanController:init(actor)
 end
 
 function HumanController:update()
-    if input.baton:pressed('left') then
+    if input.p1:pressed('left') then
         self.actor:moveLeft()
-    elseif input.baton:pressed('right') then
+    elseif input.p1:pressed('right') then
         self.actor:moveRight()
-    elseif input.baton:pressed('jump') then
+    elseif input.p1:pressed('jump') then
         self.actor:jump()
-    elseif input.baton:pressed('attack') then
+    elseif input.p1:pressed('attack') then
         self.actor:attack()
-    elseif input.baton:pressed('special') then
+    elseif input.p1:pressed('special') then
         self.actor:special()
     end
 end
