@@ -1,5 +1,9 @@
+#misc
+source/tags
+
 # temp files
 *.swp
+source/last-run.log
 
 # Compiled Lua sources
 luac.out
