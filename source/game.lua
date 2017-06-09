@@ -3,6 +3,7 @@ local sti = require "external.sti"
 local bump = require "external.bump"
 local bumpDebug = require "external.bump_debug"
 local actors = require "actors"
+local EntityList = require "entitylist"
 
 local game = {}
 
@@ -19,7 +20,8 @@ function love.resize()
     canY = math.floor((winH-canScaledH)/2)
 end
 
-dummy = nil
+player = nil
+actorList = nil
 
 function game.load()
     love.resize() -- calculate canvas scaling
@@ -34,7 +36,9 @@ function game.load()
 
 
     map = sti("assets/levels/room1.lua", { "bump" })
-
+    
+    actorList = EntityList.new()
+    
     world = bump.newWorld()
 
     map:bump_init(world)
@@ -50,13 +54,16 @@ function game.load()
 
     map:removeLayer('Enemies')
     
-    dummy = actors.Dummy.new(50, 50)
+    player = actors.Player.new(50, 50)
+    actorList:add(player)
     
 end
 
 function game.update(dt)
     map:update(dt)
-    dummy:update(dt)
+    for e in actorList:each() do
+        e:update(dt)
+    end
 end
 
 function game.draw()
@@ -70,7 +77,9 @@ function game.draw()
     lg.setColor(255, 255, 255, 255)
     map:draw(0, 0, 1, 1)
     
-    dummy:draw()
+    for e in actorList:each() do
+        e:draw()
+    end
     
     --lg.setColor(255, 0, 0)
     --local x, y = game.cam:pos()
