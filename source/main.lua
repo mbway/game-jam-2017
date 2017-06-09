@@ -17,30 +17,30 @@ function love.load(arg)
     -- allows debugging (specifically breakpoints) in ZeroBrane
     --if arg[#arg] == '-debug' then require('mobdebug').start() end
 
-	-- for printing in zerobrane
-	io.stdout:setvbuf("no")
+    -- for printing in zerobrane
+    io.stdout:setvbuf("no")
 
-	lf = love.filesystem
-	ls = love.sound
-	la = love.audio
-	lp = love.physics
-	lt = love.thread
-	li = love.image
-	lg = love.graphics
-	lm = love.mouse
-	lj = love.joystick
-	lw = love.window
+    lf = love.filesystem
+    ls = love.sound
+    la = love.audio
+    lp = love.physics
+    lt = love.thread
+    li = love.image
+    lg = love.graphics
+    lm = love.mouse
+    lj = love.joystick
+    lw = love.window
 
-	assets.load()
+    assets.load()
 
-	math.randomseed(os.time())
+    math.randomseed(os.time())
 
     game.load()
 end
 
 
 function love.update(dt)
-	limitFrameRate(60)
+    limitFrameRate(60)
 
     flux.update(dt) -- update tweening system
 
