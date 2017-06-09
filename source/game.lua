@@ -5,7 +5,7 @@ local bump = require "external.bump"
 local game = {}
 
 canW, canH, canSF, canX, canY = 512, 256, 1, 0, 0
-canvas, map, world, Enemies = nil
+canvas, map, world = nil
 
 function love.resize()
     local winW, winH = lg.getWidth(), lg.getHeight()
@@ -29,29 +29,20 @@ function game.load()
 
     map = sti("assets/levels/room1.lua", { "bump" })
 
-    world = bump.newWorld()
+    world = bump.newWorld(32)
 
     map:bump_init(world)
 
-    Enemies = map:convertToCustomLayer("Enemies") -- give sprites
-
-    --[[
-    function Enemies:update(dt)
-        for _, sprite in pairs(self.sprites) do
-            sprite.r = sprite.r + math.rad(90 * dt)
+    for i, o in ipairs(map.layers.Enemies.objects) do
+        --o.properties
+        if o.type == 'trashcan' then
+            print('loaded trashcan')
+        else
+            assert(false, string.format("unknown entity type: %s", o.type))
         end
     end
 
-    function Enemies:draw()
-        for _, sprite in pairs(self.sprites) do
-            local x = math.floor(sprite.x)
-            local y = math.floor(sprite.y)
-            local r = sprite.r
-            love.graphics.draw(sprite.image, x, y, r)
-        end
-    end
-    --]]
-
+    map:removeLayer('Enemies')
 
 end
 
@@ -68,9 +59,13 @@ function game.draw()
     map:draw(0, 0, 1, 1)
 
     lg.setColor(255, 0, 0)
-    map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
+    --local x, y = game.cam:pos()
+    
 
     game.cam:detach()
+
+    --map:bump_draw(world, canW/2-x, canH/2-y, 1, 1) -- tx, ty, sx, sy
+
     lg.setCanvas()
     lg.setColor(255, 255, 255, 255)
     lg.draw(canvas, canX, canY, 0, canSF, canSF)
