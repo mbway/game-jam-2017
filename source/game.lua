@@ -27,6 +27,7 @@ function game.load()
     canvas = lg.newCanvas(canW, canH)
     lg.setCanvas(canvas)
     lg.setBlendMode("alpha")
+    lg.clear()
 
     map = sti("assets/levels/room1.lua", { "bump" })
 
@@ -53,10 +54,12 @@ end
 
 function game.draw()
     lg.setCanvas(canvas)
+    --lg.setCanvas()
     lg.clear()
+    lg.setColor(255, 255, 255, 255)
 
     game.cam:attach()
-    --lg.translate(50, 0)
+    --lg.translate(50, 100)
     lg.setColor(255, 255, 255, 255)
     map:draw(0, 0, 1, 1)
 
