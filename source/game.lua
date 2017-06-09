@@ -1,6 +1,7 @@
 local Camera = require "external.camera"
 local sti = require "external.sti"
 local bump = require "external.bump"
+local bumpDebug = require "external.bump_debug"
 
 local game = {}
 
@@ -29,7 +30,7 @@ function game.load()
 
     map = sti("assets/levels/room1.lua", { "bump" })
 
-    world = bump.newWorld(32)
+    world = bump.newWorld()
 
     map:bump_init(world)
 
@@ -55,12 +56,13 @@ function game.draw()
     lg.clear()
 
     game.cam:attach()
+    --lg.translate(50, 0)
     lg.setColor(255, 255, 255, 255)
     map:draw(0, 0, 1, 1)
 
-    lg.setColor(255, 0, 0)
+    --lg.setColor(255, 0, 0)
     --local x, y = game.cam:pos()
-    
+    bumpDebug.draw(world)
 
     game.cam:detach()
 

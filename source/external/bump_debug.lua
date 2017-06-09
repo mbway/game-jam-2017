@@ -1,5 +1,5 @@
 
-local bump = require 'bump'
+local bump = require 'external.bump'
 
 local bump_debug = {}
 
