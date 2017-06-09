@@ -71,8 +71,18 @@ function camera:zoomTo(zoom)
 	return self
 end
 
+
+local function getCanvasSize()
+    local canvas = lg.getCanvas()
+    if canvas then
+        return canvas:getDimensions()
+    end
+    return lg.getDimensions()
+end
+
 function camera:attach()
-	local cx,cy = love.graphics.getWidth()/(2*self.scale), love.graphics.getHeight()/(2*self.scale)
+    local w,h = getCanvasSize()
+	local cx,cy = w/(2*self.scale), h/(2*self.scale)
 	love.graphics.push()
 	love.graphics.scale(self.scale)
 	love.graphics.translate(cx, cy)
@@ -92,7 +102,7 @@ end
 
 function camera:cameraCoords(x,y)
 	-- x,y = ((x,y) - (self.x, self.y)):rotated(self.rot) * self.scale + center
-	local w,h = love.graphics.getWidth(), love.graphics.getHeight()
+    local w,h = getCanvasSize()
 	local c,s = cos(self.rot), sin(self.rot)
 	x,y = x - self.x, y - self.y
 	x,y = c*x - s*y, s*x + c*y
@@ -101,7 +111,7 @@ end
 
 function camera:worldCoords(x,y)
 	-- x,y = (((x,y) - center) / self.scale):rotated(-self.rot) + (self.x,self.y)
-	local w,h = love.graphics.getWidth(), love.graphics.getHeight()
+    local w,h = getCanvasSize()
 	local c,s = cos(-self.rot), sin(-self.rot)
 	x,y = (x - w/2) / self.scale, (y - h/2) / self.scale
 	x,y = c*x - s*y, s*x + c*y
