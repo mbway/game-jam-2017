@@ -7,6 +7,8 @@ assets = require "assets"
 input = require "input"
 require "external.strict"
 require "external.utils"
+require "vector"
+
 
 local limitFrameRate = require "limitframerate"
 local game = require "game"
