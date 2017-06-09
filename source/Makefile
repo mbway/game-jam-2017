@@ -2,7 +2,7 @@
 .PHONY: always-rebuild
 
 run:
-	love .
+	love . | tee last-run.log
 
 tags: always-rebuild
 	ctags -R --extra=+q --languages=lua
