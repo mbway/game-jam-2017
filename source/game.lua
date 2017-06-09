@@ -21,13 +21,14 @@ end
 function game.load()
     love.resize() -- calculate canvas scaling
 
-    local f = 1 -- camera scaling factor
-    game.cam = Camera.new(canW/2, canH/2, f)
-
     canvas = lg.newCanvas(canW, canH)
     lg.setCanvas(canvas)
     lg.setBlendMode("alpha")
     lg.clear()
+
+    local f = 1 -- camera scaling factor
+    game.cam = Camera.new(canW/2, canH/2, f)
+
 
     map = sti("assets/levels/room1.lua", { "bump" })
 
@@ -65,11 +66,11 @@ function game.draw()
 
     --lg.setColor(255, 0, 0)
     --local x, y = game.cam:pos()
-    bumpDebug.draw(world)
+    --bumpDebug.draw(world)
+    map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
 
     game.cam:detach()
 
-    --map:bump_draw(world, canW/2-x, canH/2-y, 1, 1) -- tx, ty, sx, sy
 
     lg.setCanvas()
     lg.setColor(255, 255, 255, 255)

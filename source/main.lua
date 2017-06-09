@@ -4,12 +4,12 @@ Anim = require "anim"
 EntityList = require "entitylist"
 signal = require "signal"
 assets = require "assets"
+input = require "input"
 require "external.strict"
 require "external.utils"
 
 local limitFrameRate = require "limitframerate"
 local game = require "game"
-local baton = require "baton"
 
 debugMode = false -- global debug flag (toggle: F1). Use as you wish
 
@@ -37,6 +37,8 @@ function love.load(arg)
 
     assets.load()
 
+    input.init()
+
     math.randomseed(os.time())
 
     game.load()
@@ -48,20 +50,12 @@ function love.update(dt)
 
     flux.update(dt) -- update tweening system
 
+    input.p1:update()
     game.update(dt)
 end
 
 
 function love.draw()
     game.draw()
-end
-
-function love.keypressed(key, scancode, isRepeat)
-    if key == "escape" then
-        love.event.quit()
-    elseif key == "f1" then
-        local fullscreen, fstype = lw.getFullscreen()
-        lw.setFullscreen(not fullscreen)
-    end
 end
 

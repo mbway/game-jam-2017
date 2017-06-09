@@ -725,9 +725,9 @@ end
 -- @param sx Scale on X
 -- @param sy Scale on Y
 function Map:draw(tx, ty, sx, sy)
-	local current_canvas = lg.getCanvas()
-	lg.setCanvas(self.canvas)
-	lg.clear()
+	--local current_canvas = lg.getCanvas()
+	--lg.setCanvas(self.canvas)
+	--lg.clear()
 
 	-- Scale map to 1.0 to draw onto canvas, this fixes tearing issues
 	-- Map is translated to correct position so the right section is drawn
@@ -745,14 +745,14 @@ function Map:draw(tx, ty, sx, sy)
 
 	-- Draw canvas at 0,0; this fixes scissoring issues
 	-- Map is scaled to correct scale so the right section is shown
-	lg.push()
+	--lg.push()
 	--lg.origin()
 	--lg.scale(sx or 1, sy or sx or 1)
 
-	lg.setCanvas(current_canvas)
-	lg.draw(self.canvas)
+	--lg.setCanvas(current_canvas)
+	--lg.draw(self.canvas)
 
-	lg.pop()
+	--lg.pop()
 end
 
 --- Draw an individual Layer
