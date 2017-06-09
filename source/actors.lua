@@ -75,6 +75,16 @@ function Player:draw()
     lg.setColor(255,255,255)
 end
 
+function Player:moveLeft()
+    self.vx = -50
+end
+function Player:moveRight()
+    self.vx = 50
+end
+function Player:jump()
+    self.vy = -300
+end
+
 function Player:filter(other)
     --if other.
     -- todo set vely to 0 on colliding downwards
