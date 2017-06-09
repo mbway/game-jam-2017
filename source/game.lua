@@ -2,6 +2,7 @@ local Camera = require "external.camera"
 local sti = require "external.sti"
 local bump = require "external.bump"
 local bumpDebug = require "external.bump_debug"
+local actors = require "actors"
 
 local game = {}
 
@@ -17,6 +18,8 @@ function love.resize()
     canX = math.floor((winW-canScaledW)/2)
     canY = math.floor((winH-canScaledH)/2)
 end
+
+dummy = nil
 
 function game.load()
     love.resize() -- calculate canvas scaling
@@ -46,11 +49,14 @@ function game.load()
     end
 
     map:removeLayer('Enemies')
-
+    
+    dummy = actors.Dummy.new(50, 50)
+    
 end
 
 function game.update(dt)
     map:update(dt)
+    dummy:update(dt)
 end
 
 function game.draw()
@@ -63,7 +69,9 @@ function game.draw()
     --lg.translate(50, 100)
     lg.setColor(255, 255, 255, 255)
     map:draw(0, 0, 1, 1)
-
+    
+    dummy:draw()
+    
     --lg.setColor(255, 0, 0)
     --local x, y = game.cam:pos()
     --bumpDebug.draw(world)
