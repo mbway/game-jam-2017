@@ -68,6 +68,10 @@ function assets.load()
     addSheet("assets/player/", "player_walk_left", 32, 32)
     addSheet("assets/player/", "player_walk_aim_right", 32, 32)
     addSheet("assets/player/", "player_walk_aim_left", 32, 32)
+    addSheet("assets/player/", "player_idle_right", 32, 32)
+    addSheet("assets/player/", "player_idle_left", 32, 32)
+    addSheet("assets/player/", "player_idle_aim_right", 32, 32)
+    addSheet("assets/player/", "player_idle_aim_left", 32, 32)
     --assets.player_idle_right = oo.aug({}, assets.player_walk_right, {frames = {1}})
     --addSheet "literal_bin_32"
     
