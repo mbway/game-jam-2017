@@ -83,8 +83,8 @@ function game.draw()
 
     --lg.setColor(255, 0, 0)
     --local x, y = game.cam:pos()
-    bumpDebug.draw(world)
-    map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
+    --bumpDebug.draw(world)
+    --map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
 
     game.cam:detach()
 
