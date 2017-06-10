@@ -49,4 +49,26 @@ function EntityList:each()
     end
 end
 
+-- find the closest entity to 'from' which satisfies the predicate function
+-- eg predicate = function(actor) return actor.type == 'Player' end
+function EntityList:findClosest(from, predicate)
+    local closest = nil
+    local closestSqDist = math.huge
+    local closestdx, closestdy = math.huge
+    for e in self:each() do
+        print(e)
+        print(table.tostring(e, 2))
+        if predicate(e) then
+            local dx, dy = getVectorTo(from, e)
+            local d = vecMagSq(dx, dy)
+            if d < closestSqDist then
+                closest = e
+                closestSqDist = d
+                closestdx, closestdy = dx, dy
+            end
+        end
+    end
+    return closest, closestdx, closestdy
+end
+
 return EntityList

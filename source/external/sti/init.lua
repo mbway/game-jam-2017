@@ -731,9 +731,9 @@ function Map:draw(tx, ty, sx, sy)
 
 	-- Scale map to 1.0 to draw onto canvas, this fixes tearing issues
 	-- Map is translated to correct position so the right section is drawn
-	lg.push()
-	lg.origin()
-	lg.translate(math.floor(tx or 0), math.floor(ty or 0))
+	--lg.push()
+	--lg.origin()
+	--lg.translate(math.floor(tx or 0), math.floor(ty or 0))
 
 	for _, layer in ipairs(self.layers) do
 		if layer.visible and layer.opacity > 0 then
@@ -741,7 +741,7 @@ function Map:draw(tx, ty, sx, sy)
 		end
 	end
 
-	lg.pop()
+	--lg.pop()
 
 	-- Draw canvas at 0,0; this fixes scissoring issues
 	-- Map is scaled to correct scale so the right section is shown

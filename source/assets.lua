@@ -55,7 +55,7 @@ function assets.load()
 
     --assets.tiles = lg.newImage("assets/tiles.png")
     --assets.tileqs = makeQuads(assets.tiles, 32, 32)
-    
+
     addSheet("assets/player/", "player_jump_right", 32, 32)
     addSheet("assets/player/", "player_jump_left", 32, 32)
     addSheet("assets/player/", "player_jump_aim_right", 32, 32)
@@ -74,7 +74,9 @@ function assets.load()
     addSheet("assets/player/", "player_idle_aim_left", 32, 32)
     --assets.player_idle_right = oo.aug({}, assets.player_walk_right, {frames = {1}})
     --addSheet "literal_bin_32"
-    
+
+    addSheet("assets/", "bin", 32, 32)
+
 end
 
 return assets

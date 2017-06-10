@@ -1,9 +1,11 @@
 local HumanController = require "HumanController"
+local RushController = require "AI.RushController"
 local Actor = oo.class()
 local Anim = require "anim"
 
-function Actor:init(x, y, w, h)
+function Actor:init(type, x, y, w, h)
     world:add(self, x,y,w,h)
+    self.type = type
     self.x = x
     self.y = y
     self.w = w
@@ -36,13 +38,20 @@ function Actor:special()
 
 end
 function Actor:moveLeft()
-
+    self.vx = -100
 end
 function Actor:moveRight()
-
+    self.vx = 100
 end
 function Actor:jump()
-
+    if self:onFloor() then
+        self.vy = -100
+    end
+end
+function Actor:stopJumping()
+    if self.vy < 0 then
+        self.vy = self.vy*0.5
+    end
 end
 
 function Actor:onFloor()
@@ -99,7 +108,7 @@ end
 local Player = oo.class(Actor)
 
 function Player:init(x, y)
-    Actor.init(self, x, y, 10, 27)
+    Actor.init(self, "player", x, y, 10, 27)
     self.ay = 500 -- gravity
     self.dragX = 400
     self.controller = HumanController.new(self)
@@ -152,9 +161,11 @@ function Player:attack()
 end
 
 function Player:draw()
-    --lg.setColor(255,255,0)
-    --lg.rectangle("fill", self.x, self.y, self.w, self.h)
-    --lg.setColor(255,255,255)
+    if debugMode then
+        lg.setColor(0,0,255)
+        lg.rectangle("fill", self.x, self.y, self.w, self.h)
+        lg.setColor(255,255,255)
+    end
     lg.draw(self.image, self.quads[self.anim.frame], self.x-9, self.y-3)
 end
 
@@ -169,18 +180,77 @@ function Player:jump()
         self.vy = -250
     end
 end
-function Player:stopJumping()
-    if self.vy < 0 then
-        self.vy = self.vy*0.5
-    end
-end
 
 function Player:filter(other)
     -- todo set vely to 0 on colliding downwards
     return "slide"
 end
 
+
+
+local TrashCan = oo.class(Actor)
+
+function TrashCan:init(x, y)
+    Actor.init(self, "trashcan", x, y, 16, 26)
+    self.ay = 500 -- gravity
+    self.dragX = 400
+    self.controller = RushController.new(self)
+    self.anim = Anim.new(assets.bin.frames)
+    self.image = assets.bin.image
+    self.quads = assets.bin.quads
+    self.facing = "right"
+end
+
+function TrashCan:update(dt)
+    Actor.update(self, dt)
+
+    if self.vx > 0 then
+        self.facing = "right"
+    elseif self.vx < -0 then
+        self.facing = "left"
+    end
+
+    if self:onFloor() then
+        self.vy = 0
+    end
+
+    self.anim:update(dt)
+end
+
+function TrashCan:moveLeft()
+    self.vx = -50
+end
+function TrashCan:moveRight()
+    self.vx = 50
+end
+
+function TrashCan:attack()
+
+end
+
+function TrashCan:draw()
+    if debugMode then
+        lg.setColor(255,0,0)
+        lg.rectangle("fill", self.x, self.y, self.w, self.h)
+        lg.setColor(255,255,255)
+    end
+    if self.facing == 'left' then
+        lg.draw(self.image, self.quads[self.anim.frame], self.x-8, self.y-6)
+    else
+        lg.draw(self.image, self.quads[self.anim.frame], self.x+24, self.y-6, 0, -1, 1)
+    end
+end
+
+function TrashCan:filter(other)
+    -- todo set vely to 0 on colliding downwards
+    return "slide"
+end
+
+
+
+
 return {
     Actor = Actor,
-    Player = Player
+    Player = Player,
+    TrashCan = TrashCan
 }

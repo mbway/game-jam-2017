@@ -43,19 +43,19 @@ function game.load()
 
     map:bump_init(world)
 
-    for i, o in ipairs(map.layers.Enemies.objects) do
-        --o.properties
+    for i, o in ipairs(map.layers.Actors.objects) do
         if o.type == 'trashcan' then
-            print('loaded trashcan')
+            local e = actors.TrashCan.new(o.x, o.y)
+            actorList:add(e)
+        elseif o.type == 'player' then
+            player = actors.Player.new(o.x, o.y)
+            actorList:add(player)
         else
             assert(false, string.format("unknown entity type: %s", o.type))
         end
     end
 
-    map:removeLayer('Enemies')
-
-    player = actors.Player.new(50, 50)
-    actorList:add(player)
+    map:removeLayer('Actors')
 
 end
 
@@ -64,6 +64,8 @@ function game.update(dt)
     for e in actorList:each() do
         e:update(dt)
     end
+
+    game.cam:lookAt(player.x, player.y)
 end
 
 function game.draw()
@@ -81,13 +83,13 @@ function game.draw()
         e:draw()
     end
 
-    --lg.setColor(255, 0, 0)
-    --local x, y = game.cam:pos()
-    --bumpDebug.draw(world)
-    --map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
+    if debugMode then
+        lg.setColor(255, 0, 0)
+        bumpDebug.draw(world)
+        map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
+    end
 
     game.cam:detach()
-
 
     lg.setCanvas()
     lg.setColor(255, 255, 255, 255)

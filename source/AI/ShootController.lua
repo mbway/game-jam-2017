@@ -9,9 +9,13 @@ function ShootController:init(actor)
 end
 
 function ShootController:findTarget()
-    --TODO: Jeremy: scene list and accompanying find
-    --self.target = game.findClosest(self.actor.x, self.actor.y, entitytype)
-    -- look through ActorsList
+    local isPlayer = function(actor) return actor.type == 'player' end
+    local t, dx, dy = actorList:findClosest(self.actor, isPlayer)
+    if math.abs(dx) > 32 then
+        self.target = t
+    else
+        self.target = nil
+    end
 end
 
 function ShootController:update(dt)

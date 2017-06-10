@@ -1,8 +1,8 @@
 
 
 function getVectorTo(actorA, actorB)
-    ax, ay = actorA:getCenter()
-    bx, by = actorB:getCenter()
+    local ax, ay = actorA:getCenter()
+    local bx, by = actorB:getCenter()
     return vecMinus(bx, by, ax, ay)
 end
 

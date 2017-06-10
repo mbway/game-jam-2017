@@ -19,6 +19,8 @@ function HumanController:update()
         self.jumpCounter = 4
     elseif input.p1:released('jump') then
         self.actor:stopJumping()
+        -- if the jump button is released, don't continue buffering the input
+        self.jumpCounter = 0
     end
     -- input buffering so that you can jump a few frames before hand
     if self.jumpCounter > 0 then
