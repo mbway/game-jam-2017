@@ -25,6 +25,8 @@ rooms = nil
 actorList = nil
 projectileList = nil
 
+local collisions
+
 function game.load()
     love.resize() -- calculate canvas scaling
 
@@ -74,10 +76,23 @@ function game.load()
 
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
+end
 
+function game.alreadyCollided(a, b)
+    return collisions[a] and collisions[a][b]
+        or (collisions[b] and collisions[b][a])
+end
+
+function game.addCollision(a, b)
+    if not collisions[a] then
+        collisions[a] = {}
+    end
+    collisions[a][b] = true
 end
 
 function game.update(dt)
+    collisions = {}
+    
     map:update(dt)
     for e in actorList:each() do
         e:update(dt)

@@ -11,7 +11,7 @@ require "vector"
 
 
 local limitFrameRate = require "limitframerate"
-local game = require "game"
+game = require "game"
 
 debugMode = false -- global debug flag (toggle: F12). Use as you wish
 

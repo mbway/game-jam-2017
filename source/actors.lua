@@ -76,10 +76,7 @@ function Actor:isDead()
 end
 
 function Actor:onFloor()
-    local actualX, actualY, collisions, len = world:check(self, self.x, self.y+1, function (self, other)
-        return "touch"
-        -- return false if you want to ignore the collision, i.e. this thing isn't a floor object
-    end)
+    local actualX, actualY, collisions, len = world:check(self, self.x, self.y+1, self.filter)
     return len > 0
 end
 
@@ -93,6 +90,11 @@ function Actor:filter(other)
     end
     -- "touch", "cross", "slide", "bounce" or nil to ignore
 end
+
+function Actor:collide(other)
+    
+end
+
 
 function Actor:update(dt)
     if self.controller then
@@ -121,6 +123,15 @@ function Actor:update(dt)
     local goalX = self.x + self.vx * dt
     local goalY = self.y + self.vy * dt
     local actualX, actualY, collisions, len = world:move(self, goalX, goalY, self.filter)
+    
+    for i,c in ipairs(collisions) do
+        if not game.alreadyCollided(c.item, c.other) then
+           game.addCollision(c.item, c.other)
+           if c.item.collide then c.item:collide(c.other) end
+           if c.other.collide then c.other:collide(c.item) end
+        end
+    end
+    
     self.x = actualX
     self.y = actualY
     return collisions, len
@@ -185,7 +196,11 @@ function Player:update(dt)
                 self:setAnim("player_idle_"..postfix)
             end
         else
-            self:setAnim("player_jump_"..postfix)
+            if self.running then
+                self:setAnim("player_jump_run_"..postfix)
+            else
+                self:setAnim("player_jump_"..postfix)
+            end
         end
     end
 
