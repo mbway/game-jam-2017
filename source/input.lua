@@ -4,7 +4,6 @@ local input = {}
 local controls = {
     left    = {'key:left',   'button:dpleft',  'axis:leftx-'},
     right   = {'key:right',  'button:dpright', 'axis:leftx+'},
-    up      = {'key:up',     'button:dpup',    'axis:lefty+'},
     run     = {'key:lshift', 'button:leftshoulder'},
     jump    = {'key:x',      'button:a'},
     attack  = {'key:c',      'button:x'},

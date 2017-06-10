@@ -5,8 +5,7 @@ function HumanController:init(actor)
 end
 
 function HumanController:update()
-    self.actor.running = input.p1:pressed('run')
-    self.actor.lookingUp = input.p1:down('up')
+    self.actor.running = input.p1:down('run')
 
     if input.p1:down('left') then
         self.actor:moveLeft()
