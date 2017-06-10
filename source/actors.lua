@@ -1,18 +1,20 @@
 local HumanController = require "HumanController"
 local RushController = require "AI.RushController"
+local Projectile = require "Projectile"
 local Actor = oo.class()
 local Anim = require "anim"
 
 function Actor:init(type, x, y, w, h)
-    world:add(self, x,y,w,h)
+    world:add(self, x, y, w, h)
     self.type = type
+    self.health = 4
     self.x = x
     self.y = y
     self.w = w
     self.h = h
     self.vx = 0
     self.vy = 0
-    self.ax = 0
+    self.ax = 0--TODO: acceleration currently not used
     self.ay = 0
     self.dragX = 0
     self.dragY = 0
@@ -52,6 +54,15 @@ function Actor:stopJumping()
     if self.vy < 0 then
         self.vy = self.vy*0.5
     end
+end
+function Actor:takeDamage(damage)
+    self.health = self.health - damage
+    if self.health <= 0 then
+        self:die()
+    end
+end
+function Actor:die()
+    --TODO
 end
 
 function Actor:onFloor()
@@ -108,7 +119,7 @@ end
 local Player = oo.class(Actor)
 
 function Player:init(x, y)
-    Actor.init(self, "player", x, y, 10, 27)
+    Actor.init(self, "player", x, y, 10, 28)
     self.ay = 500 -- gravity
     self.dragX = 400
     self.controller = HumanController.new(self)
@@ -118,6 +129,7 @@ function Player:init(x, y)
     self.facing = "right"
     self.running = false
     self.weaponDrawnTimer = 0
+    self.fireRateCounter = 0
 end
 
 function Player:update(dt)
@@ -128,6 +140,8 @@ function Player:update(dt)
     elseif self.vx < -0 then
         self.facing = "left"
     end
+
+    self.fireRateCounter = self.fireRateCounter - dt
 
     local postfix = nil
     if self.weaponDrawnTimer > 0 then
@@ -158,6 +172,18 @@ end
 
 function Player:attack()
     self.weaponDrawnTimer = 1.0
+    if self.fireRateCounter <= 0 then
+        self.fireRateCounter = 0.1
+        local p = nil
+        local damage = 10
+
+        if self.facing == 'left' then
+            p = Projectile.new(damage, self.x-10, self.y+9, 5, 2, -250, 0)
+        else
+            p = Projectile.new(damage, self.x+17, self.y+9, 5, 2, 250, 0)
+        end
+        projectileList:add(p)
+    end
 end
 
 function Player:draw()
@@ -166,7 +192,7 @@ function Player:draw()
         lg.rectangle("fill", self.x, self.y, self.w, self.h)
         lg.setColor(255,255,255)
     end
-    lg.draw(self.image, self.quads[self.anim.frame], self.x-9, self.y-3)
+    lg.draw(self.image, self.quads[self.anim.frame], self.x-9, self.y-4)
 end
 
 function Player:moveLeft()
@@ -185,6 +211,8 @@ function Player:filter(other)
     -- todo set vely to 0 on colliding downwards
     return "slide"
 end
+
+
 
 
 

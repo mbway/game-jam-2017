@@ -22,6 +22,7 @@ end
 
 player = nil
 actorList = nil
+projectileList = nil
 
 function game.load()
     love.resize() -- calculate canvas scaling
@@ -38,6 +39,7 @@ function game.load()
     map = sti("assets/levels/room1.lua", { "bump" })
 
     actorList = EntityList.new()
+    projectileList = EntityList.new()
 
     world = bump.newWorld()
 
@@ -64,6 +66,9 @@ function game.update(dt)
     for e in actorList:each() do
         e:update(dt)
     end
+    for p in projectileList:each() do
+        p:update(dt)
+    end
 
     game.cam:lookAt(player.x, player.y)
 end
@@ -71,7 +76,7 @@ end
 function game.draw()
     lg.setCanvas(canvas)
     --lg.setCanvas()
-    lg.clear()
+    lg.clear(37, 19, 19, 255)
     lg.setColor(255, 255, 255, 255)
 
     game.cam:attach()
@@ -81,6 +86,9 @@ function game.draw()
 
     for e in actorList:each() do
         e:draw()
+    end
+    for p in projectileList:each() do
+        p:draw()
     end
 
     if debugMode then

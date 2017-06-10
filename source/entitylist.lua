@@ -56,8 +56,6 @@ function EntityList:findClosest(from, predicate)
     local closestSqDist = math.huge
     local closestdx, closestdy = math.huge
     for e in self:each() do
-        print(e)
-        print(table.tostring(e, 2))
         if predicate(e) then
             local dx, dy = getVectorTo(from, e)
             local d = vecMagSq(dx, dy)
