@@ -17,6 +17,7 @@ function Anim:play(frames, restart)
         self.frames = frames
         self.timePerFrame = 1/(frames.rate or 30)
         self.pos = 1
+        self.frame = self.frames[1]
     end
     self.isPlaying = true
 end

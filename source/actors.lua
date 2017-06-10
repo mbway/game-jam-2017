@@ -132,6 +132,7 @@ function Player:update(dt)
     else
         self:setAnim("player_jump_"..self.facing)
     end
+    
     self.anim:update(dt)
 end
 
