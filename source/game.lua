@@ -24,6 +24,8 @@ player = nil
 actorList = nil
 projectileList = nil
 
+local collisions = {}
+
 function game.load()
     love.resize() -- calculate canvas scaling
 
@@ -58,10 +60,30 @@ function game.load()
     end
 
     map:removeLayer('Actors')
+    
+    -- tracks all the pairs of entities that touched each other
+    -- (but if a,b is in the list then b,a is not also in the list)
+    -- therefore each pair only occurs once
+    -- so we can loop over it to handle collisions
+    collisions = {}
+    
+end
 
+function game.alreadyCollided(a, b)
+    return collisions[a] and collisions[a][b]
+        or (collisions[b] and collisions[b][a]) 
+end
+
+function game.addCollision(a, b)
+    if not collisions[a] then
+        collisions[a] = {}
+    end
+    collisions[a][b] = true
 end
 
 function game.update(dt)
+    collisions = {}
+    
     map:update(dt)
     for e in actorList:each() do
         e:update(dt)
