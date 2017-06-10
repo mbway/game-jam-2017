@@ -7,7 +7,7 @@ local Anim = require "anim"
 function Actor:init(type, x, y, w, h)
     world:add(self, x, y, w, h)
     self.type = type
-    self.health = 4
+    self.health = math.huge
     self.x = x
     self.y = y
     self.w = w
@@ -21,6 +21,9 @@ function Actor:init(type, x, y, w, h)
     self.vxMax = 999
     self.vyMax = 999
     self.controller = nil
+    self.solid = true
+    self.invulnTimer = 0
+    self.flickerTime = 0.1
 end
 
 function Actor:setAnim(name, restart)
@@ -56,13 +59,19 @@ function Actor:stopJumping()
     end
 end
 function Actor:takeDamage(damage)
-    self.health = self.health - damage
-    if self.health <= 0 then
-        self:die()
+    if self.invulnTimer <= 0 then
+        self.health = self.health - damage
+        if self.health <= 0 then
+            self:die()
+        end
+        self.invulnTimer = 1
     end
 end
 function Actor:die()
-    --TODO
+    self.solid = false
+end
+function Actor:isDead()
+    return self.health <= 0
 end
 
 function Actor:onFloor()
@@ -75,7 +84,12 @@ end
 
 -- collision resolution handler
 function Actor:filter(other)
-    return "slide"
+    local solid = self.solid and other.solid
+    if other.type and not solid then
+        return nil
+    else
+        return "slide"
+    end
     -- "touch", "cross", "slide", "bounce" or nil to ignore
 end
 
@@ -101,11 +115,14 @@ function Actor:update(dt)
         self.vy = clamp(self.vy, -self.vyMax, self.vyMax)
     end
 
+    self.invulnTimer = self.invulnTimer - dt
+
     local goalX = self.x + self.vx * dt
     local goalY = self.y + self.vy * dt
     local actualX, actualY, collisions, len = world:move(self, goalX, goalY, self.filter)
     self.x = actualX
     self.y = actualY
+    return collisions, len
 end
 
 function Actor:draw()
@@ -129,53 +146,60 @@ function Player:init(x, y)
     self.facing = "right"
     self.running = false
     self.weaponDrawnTimer = 0
-    self.fireRateCounter = 0
+    self.fireRateTimer = 0
+    self.health = 10
 end
 
 function Player:update(dt)
     Actor.update(self, dt)
 
-    if self.vx > 0 then
-        self.facing = "right"
-    elseif self.vx < -0 then
-        self.facing = "left"
-    end
+    if not self:isDead() then
+        if self.vx > 0 then
+            self.facing = "right"
+        elseif self.vx < -0 then
+            self.facing = "left"
+        end
 
-    self.fireRateCounter = self.fireRateCounter - dt
+        self.fireRateTimer = self.fireRateTimer - dt
+        -- eg for 1 second flicker time, mod by 2, and if flicker timer > 1 draw, else don't
+        --self.flickerTimer = (self.flickerTimer + dt) % (2*self.flickerTime)
 
-    local postfix = nil
-    if self.weaponDrawnTimer > 0 then
-        self.weaponDrawnTimer = self.weaponDrawnTimer - dt
-        postfix = "aim_"..self.facing
-    else
-        postfix = self.facing
-    end
+        local postfix = nil
+        if self.weaponDrawnTimer > 0 then
+            self.weaponDrawnTimer = self.weaponDrawnTimer - dt
+            postfix = "aim_"..self.facing
+        else
+            postfix = self.facing
+        end
 
-    if self:onFloor() then
-        self.vy = 0
+        if self:onFloor() then
+            self.vy = 0
 
-        if math.abs(self.vx) > 0.5 then
-            if self.running then
-                self:setAnim("player_run_"..postfix)
+            if math.abs(self.vx) > 0.5 then
+                if self.running then
+                    self:setAnim("player_run_"..postfix)
+                else
+                    self:setAnim("player_walk_"..postfix)
+                end
             else
-                self:setAnim("player_walk_"..postfix)
+                self:setAnim("player_idle_"..postfix)
             end
         else
-            self:setAnim("player_idle_"..postfix)
+            self:setAnim("player_jump_"..postfix)
         end
-    else
-        self:setAnim("player_jump_"..postfix)
     end
 
     self.anim:update(dt)
 end
 
 function Player:attack()
+    if self:isDead() then return end
+
     self.weaponDrawnTimer = 1.0
-    if self.fireRateCounter <= 0 then
-        self.fireRateCounter = 0.1
+    if self.fireRateTimer <= 0 then
+        self.fireRateTimer = 0.1
         local p = nil
-        local damage = 10
+        local damage = 1
 
         if self.facing == 'left' then
             p = Projectile.new(damage, self.x-10, self.y+9, 5, 2, -250, 0)
@@ -192,24 +216,36 @@ function Player:draw()
         lg.rectangle("fill", self.x, self.y, self.w, self.h)
         lg.setColor(255,255,255)
     end
-    lg.draw(self.image, self.quads[self.anim.frame], self.x-9, self.y-4)
+    if self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
+        if self.facing == 'left' then
+            lg.draw(self.image, self.quads[self.anim.frame], self.x-11, self.y-4)
+        else
+            lg.draw(self.image, self.quads[self.anim.frame], self.x-9, self.y-4)
+        end
+    end
 end
 
 function Player:moveLeft()
+    if self:isDead() then return end
     self.vx = self.running and -160 or -100
 end
 function Player:moveRight()
+    if self:isDead() then return end
     self.vx = self.running and 160 or 100
 end
 function Player:jump()
+    if self:isDead() then return end
     if self:onFloor() then
         self.vy = -250
     end
 end
-
-function Player:filter(other)
-    -- todo set vely to 0 on colliding downwards
-    return "slide"
+function Player:die()
+    Actor.die(self)
+    if self.facing == 'left' then
+        self:setAnim("player_death_left")
+    else
+        self:setAnim('player_death_right')
+    end
 end
 
 
@@ -227,10 +263,21 @@ function TrashCan:init(x, y)
     self.image = assets.bin.image
     self.quads = assets.bin.quads
     self.facing = "right"
+    self.health = 5
 end
 
 function TrashCan:update(dt)
-    Actor.update(self, dt)
+    local collisions, len = Actor.update(self, dt)
+
+    if not self:isDead() then
+        for i=1,len do
+            -- handle collisions
+            local o = collisions[i].other
+            if o.type == 'player' then
+                o:takeDamage(1)
+            end
+        end
+    end
 
     if self.vx > 0 then
         self.facing = "right"
@@ -246,14 +293,23 @@ function TrashCan:update(dt)
 end
 
 function TrashCan:moveLeft()
-    self.vx = -50
+    if not self:isDead() then
+        self.vx = -50
+    end
 end
 function TrashCan:moveRight()
-    self.vx = 50
+    if not self:isDead() then
+        self.vx = 50
+    end
 end
 
 function TrashCan:attack()
 
+end
+
+function TrashCan:die()
+    Actor.die(self)
+    self:setAnim("bin_death")
 end
 
 function TrashCan:draw()
@@ -267,11 +323,6 @@ function TrashCan:draw()
     else
         lg.draw(self.image, self.quads[self.anim.frame], self.x+24, self.y-6, 0, -1, 1)
     end
-end
-
-function TrashCan:filter(other)
-    -- todo set vely to 0 on colliding downwards
-    return "slide"
 end
 
 
