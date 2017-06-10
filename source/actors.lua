@@ -1,12 +1,14 @@
 local HumanController = require "HumanController"
 local RushController = require "AI.RushController"
 local Projectile = require "Projectile"
+local HealthBar = require "HealthBar"
 local Actor = oo.class()
 local Anim = require "anim"
 
 function Actor:init(type, x, y, w, h)
     world:add(self, x, y, w, h)
     self.type = type
+    self.maxHealth = math.huge
     self.health = math.huge
     self.x = x
     self.y = y
@@ -172,6 +174,7 @@ function Player:init(x, y)
     self.running = false
     self.weaponDrawnTimer = 0
     self.fireRateTimer = 0
+    self.maxHealth = 10
     self.health = 10
     self.invulnTime = 1
 end
@@ -289,9 +292,11 @@ function RushEnemy:init(x, y, w, h, type, sheetName)
     self.anim = Anim.new(assets[sheetName].frames)
     self:setAnim(sheetName)
     self.facing = "right"
+    self.maxHealth = 5
     self.health = 5
     self.patrolLeft  = x
     self.patrolRight = x
+    self.running = false
 end
 
 function RushEnemy:update(dt)
@@ -309,7 +314,11 @@ function RushEnemy:update(dt)
         if math.abs(self.vx) < 1 then
             self:setAnim(self.sheetName..'_idle')
         else
-            self:setAnim(self.sheetName)
+            if self.running then
+                self:setAnim(self.sheetName..'_run')
+            else
+                self:setAnim(self.sheetName)
+            end
         end
     end
 
@@ -347,17 +356,24 @@ end
 local TrashCan = oo.class(RushEnemy)
 
 function TrashCan:init(x, y, properties)
-    RushEnemy.init(self, x, y, 16, 26, "trashcan", "bin")
+    RushEnemy.init(self, x, y, 16, 22, "trashcan", "bin")
+    self.maxHealth = 5
     self.health = 5
     self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
     self.patrolRight = x + (properties.patrolRight or 0) * tileDim
+    self.healthBar = HealthBar.new(self, -5)
 end
 function TrashCan:spriteOffsets()
     if self.facing == 'left' then
-        return -8, -6, 1
+        return -8, -10, 1
     else
-        return 24, -6, -1
+        return 24, -10, -1
     end
+end
+
+function TrashCan:draw()
+    Actor.draw(self)
+    self.healthBar:draw()
 end
 
 
@@ -365,19 +381,30 @@ local Stalker = oo.class(RushEnemy)
 
 function Stalker:init(x, y, properties)
     RushEnemy.init(self, x, y, 12, 29, "stalker", "stalker")
+    self.maxHealth = 5
     self.health = 5
     self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
     self.patrolRight = x + (properties.patrolRight or 0) * tileDim
+    self.healthBar = HealthBar.new(self, -5)
+    self.running = false
 end
 
 function Stalker:moveLeft()
     if not self:isDead() then
-        self.vx = -60
+        if self.running then
+            self.vx = -90
+        else
+            self.vx = -60
+        end
     end
 end
 function Stalker:moveRight()
     if not self:isDead() then
-        self.vx = 60
+        if self.running then
+            self.vx = 90
+        else
+            self.vx = 60
+        end
     end
 end
 function Stalker:spriteOffsets()
@@ -386,6 +413,10 @@ function Stalker:spriteOffsets()
     else
         return -8, -3, 1
     end
+end
+function Stalker:draw()
+    Actor.draw(self)
+    self.healthBar:draw()
 end
 
 

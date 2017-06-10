@@ -22,6 +22,7 @@ end
 function RushController:update(dt)
     self:findTarget()
     if self.target then
+        self.actor.running = true
         local dx, dy = getVectorTo(self.actor, self.target)
 
         if math.abs(dx) > 15 then
@@ -32,6 +33,8 @@ function RushController:update(dt)
             end
         end
     else
+        self.actor.running = false
+
         -- patrol until a target is found
         local x, y = self.actor.x, self.actor.y
         if self.patrolDirection == 'left' then

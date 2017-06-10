@@ -8,7 +8,7 @@ return {
   height = 100,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 11,
+  nextobjectid = 13,
   properties = {},
   tilesets = {
     {
@@ -55,7 +55,7 @@ return {
           shape = "rectangle",
           x = 1200,
           y = 1376,
-          width = 400,
+          width = 336,
           height = 224,
           rotation = 0,
           visible = true,
@@ -495,6 +495,19 @@ return {
             ["patrolLeft"] = 2,
             ["patrolRight"] = 2
           }
+        },
+        {
+          id = 12,
+          name = "trashcan",
+          type = "trashcan",
+          shape = "rectangle",
+          x = 1472,
+          y = 1536,
+          width = 32,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     },
