@@ -23,7 +23,8 @@ function Actor:init(type, x, y, w, h)
     self.controller = nil
     self.solid = true
     self.invulnTimer = 0
-    self.flickerTime = 0.1
+    self.invulnTime = 0.16
+    self.flickerTime = 0.08
 end
 
 function Actor:setAnim(name, restart)
@@ -64,7 +65,7 @@ function Actor:takeDamage(damage)
         if self.health <= 0 then
             self:die()
         end
-        self.invulnTimer = 1
+        self.invulnTimer = self.invulnTime
     end
 end
 function Actor:die()
@@ -148,6 +149,7 @@ function Player:init(x, y)
     self.weaponDrawnTimer = 0
     self.fireRateTimer = 0
     self.health = 10
+    self.invulnTime = 1
 end
 
 function Player:update(dt)
@@ -161,8 +163,6 @@ function Player:update(dt)
         end
 
         self.fireRateTimer = self.fireRateTimer - dt
-        -- eg for 1 second flicker time, mod by 2, and if flicker timer > 1 draw, else don't
-        --self.flickerTimer = (self.flickerTimer + dt) % (2*self.flickerTime)
 
         local postfix = nil
         if self.weaponDrawnTimer > 0 then
@@ -216,7 +216,8 @@ function Player:draw()
         lg.rectangle("fill", self.x, self.y, self.w, self.h)
         lg.setColor(255,255,255)
     end
-    if self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
+
+    if self:isDead() or self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
         if self.facing == 'left' then
             lg.draw(self.image, self.quads[self.anim.frame], self.x-11, self.y-4)
         else
@@ -318,10 +319,12 @@ function TrashCan:draw()
         lg.rectangle("fill", self.x, self.y, self.w, self.h)
         lg.setColor(255,255,255)
     end
-    if self.facing == 'left' then
-        lg.draw(self.image, self.quads[self.anim.frame], self.x-8, self.y-6)
-    else
-        lg.draw(self.image, self.quads[self.anim.frame], self.x+24, self.y-6, 0, -1, 1)
+    if self:isDead() or self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
+        if self.facing == 'left' then
+            lg.draw(self.image, self.quads[self.anim.frame], self.x-8, self.y-6)
+        else
+            lg.draw(self.image, self.quads[self.anim.frame], self.x+24, self.y-6, 0, -1, 1)
+        end
     end
 end
 

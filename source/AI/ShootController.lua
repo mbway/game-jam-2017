@@ -11,7 +11,7 @@ end
 function ShootController:findTarget()
     local isPlayer = function(actor) return actor.type == 'player' end
     local t, dx, dy = actorList:findClosest(self.actor, isPlayer)
-    if math.abs(dx) > 32 then
+    if math.abs(dx) > 32 and findRoom(self.x, self.y).name == findRoom(t.x, t.y).name then
         self.target = t
     else
         self.target = nil
