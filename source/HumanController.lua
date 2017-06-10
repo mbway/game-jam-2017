@@ -5,6 +5,8 @@ function HumanController:init(actor)
 end
 
 function HumanController:update()
+    self.actor.running = input.p1:pressed('run')
+
     if input.p1:pressed('left') then
         self.actor:moveLeft()
     elseif input.p1:pressed('right') then

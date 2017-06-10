@@ -63,7 +63,7 @@ local Player = oo.class(Actor)
 
 function Player:init(x, y)
     Actor.init(self, x, y, 10, 10)
-    self.ay = 400
+    self.ay = 500 -- gravity
     self.controller = HumanController.new(self)
 end
 
@@ -78,13 +78,13 @@ function Player:draw()
 end
 
 function Player:moveLeft()
-    self.vx = -50
+    self.vx = -100
 end
 function Player:moveRight()
-    self.vx = 50
+    self.vx = 100
 end
 function Player:jump()
-    self.vy = -300
+    self.vy = -250
 end
 
 function Player:filter(other)

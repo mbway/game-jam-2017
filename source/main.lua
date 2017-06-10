@@ -59,5 +59,8 @@ end
 
 function love.draw()
     game.draw()
+
+    lg.setColor(100, 100, 100)
+    lg.print(string.format('FPS: %d', love.timer.getFPS()), 20, 20)
 end
 
