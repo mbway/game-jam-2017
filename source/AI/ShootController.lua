@@ -11,6 +11,7 @@ end
 function ShootController:findTarget()
     --TODO: Jeremy: scene list and accompanying find
     --self.target = game.findClosest(self.actor.x, self.actor.y, entitytype)
+    -- look through ActorsList
 end
 
 function ShootController:update(dt)

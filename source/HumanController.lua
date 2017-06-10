@@ -2,6 +2,7 @@ local HumanController = oo.class()
 
 function HumanController:init(actor)
     self.actor = actor
+    self.jumpCounter = 0
 end
 
 function HumanController:update()
@@ -13,9 +14,16 @@ function HumanController:update()
     if input.p1:down('right') then
         self.actor:moveRight()
     end
+
     if input.p1:pressed('jump') then
+        self.jumpCounter = 4
+    end
+    -- input buffering so that you can jump a few frames before hand
+    if self.jumpCounter > 0 then
+        self.jumpCounter = self.jumpCounter - 1
         self.actor:jump()
     end
+
     if input.p1:pressed('attack') then
         self.actor:attack()
     end
