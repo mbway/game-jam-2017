@@ -18,7 +18,7 @@ function ShootController:update(dt)
         self.cooldownTimer = self.cooldownTimer - dt
         if self.cooldownTimer <= 0 then
             self.cooldownTimer = self.cooldown
-            self.actor:shoot(self.target)
+            self.actor:attack(self.target)
         end
 
         vx, vy = getVectorTo(self.actor, self.target)

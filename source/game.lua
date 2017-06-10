@@ -36,9 +36,9 @@ function game.load()
 
 
     map = sti("assets/levels/room1.lua", { "bump" })
-    
+
     actorList = EntityList.new()
-    
+
     world = bump.newWorld()
 
     map:bump_init(world)
@@ -53,10 +53,10 @@ function game.load()
     end
 
     map:removeLayer('Enemies')
-    
+
     player = actors.Player.new(50, 50)
     actorList:add(player)
-    
+
 end
 
 function game.update(dt)
@@ -76,11 +76,11 @@ function game.draw()
     --lg.translate(50, 100)
     lg.setColor(255, 255, 255, 255)
     map:draw(0, 0, 1, 1)
-    
+
     for e in actorList:each() do
         e:draw()
     end
-    
+
     --lg.setColor(255, 0, 0)
     --local x, y = game.cam:pos()
     --bumpDebug.draw(world)

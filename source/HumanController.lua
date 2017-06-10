@@ -1,18 +1,20 @@
 local HumanController = oo.class()
 
-function HumanController:init(ctrl, actor)
+function HumanController:init(actor)
     self.actor = actor
 end
 
-function HumanController:update(ctrl)
-    if input.baton:pressed('left') then
+function HumanController:update()
+    if input.p1:pressed('left') then
         self.actor:moveLeft()
-    elseif input.baton:pressed('right') then
+    elseif input.p1:pressed('right') then
         self.actor:moveRight()
-    elseif input.baton:pressed('up') then
+    elseif input.p1:pressed('jump') then
         self.actor:jump()
-    elseif input.baton:pressed('shoot') then
-        self.actor:shoot()
+    elseif input.p1:pressed('attack') then
+        self.actor:attack()
+    elseif input.p1:pressed('special') then
+        self.actor:special()
     end
 end
 

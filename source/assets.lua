@@ -39,13 +39,36 @@ function assets.playSfx(t)
     sfxIndices[t] = n + 1
 end
 
+
+local function addSheet(name, quadw, quadh)
+    local t = {}
+    t.image = lg.newImage("assets/"..name..".png")
+    t.quads = makeQuads(t.image, quadw, quadh)
+    assets[name] = t
+end
+
 function assets.load()
 
     lg.setDefaultFilter("nearest", "nearest") -- for sharp pixel zooming
 
     --assets.tiles = lg.newImage("assets/tiles.png")
     --assets.tileqs = makeQuads(assets.tiles, 32, 32)
-
+    
+    addSheet("player_jump", 32, 32)
+    addSheet("player_jump_aim", 32, 32)
+    addSheet("player_jump_aim", 32, 32)
+    addSheet("player_jump_left", 32, 32)
+    addSheet("player_jump_aim_left", 32, 32)
+    addSheet("player_run", 32, 32)
+    addSheet("player_run_aim", 32, 32)
+    addSheet("player_run_left", 32, 32)
+    addSheet("player_run_aim_left", 32, 32)
+    addSheet("player_walk", 32, 32)
+    addSheet("player_walk_aim", 32, 32)
+    addSheet("player_walk_left", 32, 32)
+    addSheet("player_walk_aim_left", 32, 32)
+    --addSheet "literal_bin_32"
+    
 end
 
 return assets

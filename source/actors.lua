@@ -1,3 +1,4 @@
+local HumanController = require "HumanController"
 local Actor = oo.class()
 
 function Actor:init(x, y, w, h)
@@ -22,19 +23,19 @@ function Actor:getCenter()
 end
 
 function Actor:attack()
-    
+
 end
 function Actor:special()
     
 end
 function Actor:moveLeft()
-    
+
 end
 function Actor:moveRight()
-    
+
 end
 function Actor:jump()
-    
+
 end
 
 function Actor:onFloor()
@@ -56,8 +57,8 @@ function Actor:update(dt)
         self.controller:update(dt)
     end
     if self.ax == 0 then
-        if self.vx > 0 then self.vx = max(0, self.vx - self.dragX * dt)
-        elseif self.vx < 0 then self.vx = min(0, self.mx + self.dragX * dt)
+        if self.vx > 0 then self.vx = math.max(0, self.vx - self.dragX * dt)
+        elseif self.vx < 0 then self.vx = math.min(0, self.vx + self.dragX * dt)
         end
     else
         self.vx = self.vx + self.ax * dt
@@ -65,8 +66,8 @@ function Actor:update(dt)
     end
     
     if self.ay == 0 then
-        if self.vy > 0 then self.vy = max(0, self.vy - self.dragY * dt)
-        elseif self.vy < 0 then self.vy = min(0, self.my + self.dragY * dt)
+        if self.vy > 0 then self.vy = math.max(0, self.vy - self.dragY * dt)
+        elseif self.vy < 0 then self.vy = math.min(0, self.vy + self.dragY * dt)
         end
     else
         self.vy = self.vy + self.ay * dt
@@ -81,7 +82,7 @@ function Actor:update(dt)
 end
 
 function Actor:draw()
-    
+
 end
 
 
@@ -91,6 +92,7 @@ function Player:init(x, y)
     Actor.init(self, x, y, 10, 10)
     self.ay = 400
     self.dragX = 400
+    self.controller = HumanController.new(self)
 end
 
 function Player:update(dt)
