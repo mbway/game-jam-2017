@@ -33,7 +33,7 @@ function Actor:attack()
 
 end
 function Actor:special()
-
+    
 end
 function Actor:moveLeft()
 
@@ -71,7 +71,7 @@ function Actor:update(dt)
         self.vx = self.vx + self.ax * dt
         self.vx = clamp(self.vx, -self.vxMax, self.vxMax)
     end
-
+    
     if self.ay == 0 then
         if self.vy > 0 then self.vy = math.max(0, self.vy - self.dragY * dt)
         elseif self.vy < 0 then self.vy = math.min(0, self.vy + self.dragY * dt)
@@ -80,7 +80,7 @@ function Actor:update(dt)
         self.vy = self.vy + self.ay * dt
         self.vy = clamp(self.vy, -self.vyMax, self.vyMax)
     end
-
+    
     local goalX = self.x + self.vx * dt
     local goalY = self.y + self.vy * dt
     local actualX, actualY, collisions, len = world:move(self, goalX, goalY, self.filter)
@@ -99,7 +99,7 @@ end
 local Player = oo.class(Actor)
 
 function Player:init(x, y)
-    Actor.init(self, x, y, 14, 27)
+    Actor.init(self, x, y, 10, 27)
     self.ay = 500 -- gravity
     self.dragX = 400
     self.controller = HumanController.new(self)
@@ -108,46 +108,61 @@ function Player:init(x, y)
     self.quads = assets.player_jump_right.quads
     self.facing = "right"
     self.running = false
+    self.weaponDrawnTimer = 0
 end
 
 function Player:update(dt)
     Actor.update(self, dt)
-
+    
     if self.vx > 0 then
         self.facing = "right"
     elseif self.vx < -0 then
         self.facing = "left"
     end
-
+    
+    local postfix = nil
+    if self.weaponDrawnTimer > 0 then
+        self.weaponDrawnTimer = self.weaponDrawnTimer - dt
+        postfix = "aim_"..self.facing
+    else
+        postfix = self.facing
+    end
+    
     if self:onFloor() then
         self.vy = 0
-
+        
         if math.abs(self.vx) > 0.5 then
             if self.running then
-                self:setAnim("player_run_"..self.facing)
+                self:setAnim("player_run_"..postfix)
             else
-                self:setAnim("player_walk_"..self.facing)
+                self:setAnim("player_walk_"..postfix)
             end
+        else
+            self:setAnim("player_idle_"..postfix)
         end
     else
-        self:setAnim("player_jump_"..self.facing)
+        self:setAnim("player_jump_"..postfix)
     end
     
     self.anim:update(dt)
 end
 
+function Player:attack()
+    self.weaponDrawnTimer = 1.0
+end
+
 function Player:draw()
-    lg.setColor(255,255,0)
-    lg.rectangle("fill", self.x, self.y, self.w, self.h)
-    lg.setColor(255,255,255)
-    lg.draw(self.image, self.quads[self.anim.frame], self.x-7, self.y-3)
+    --lg.setColor(255,255,0)
+    --lg.rectangle("fill", self.x, self.y, self.w, self.h)
+    --lg.setColor(255,255,255)
+    lg.draw(self.image, self.quads[self.anim.frame], self.x-9, self.y-3)
 end
 
 function Player:moveLeft()
-    self.vx = self.running and -100 or -160
+    self.vx = self.running and -160 or -100
 end
 function Player:moveRight()
-    self.vx = self.running and 100 or 160
+    self.vx = self.running and 160 or 100
 end
 function Player:jump()
     if self:onFloor() then
