@@ -36,6 +36,10 @@ function Projectile:update(dt)
     self.y = goalY
 end
 
+function Projectile:collide(other)
+    
+end
+
 function Projectile:draw()
     lg.rectangle('fill', self.x, self.y, self.w, self.h)
 end

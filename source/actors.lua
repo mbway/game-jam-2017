@@ -126,8 +126,8 @@ function Actor:update(dt)
     for i,c in ipairs(collisions) do
         if not game.alreadyCollided(c.item, c.other) then
            game.addCollision(c.item, c.other)
-           c.item:collide(c.other)
-           c.other:collide(c.item)
+           if c.item.collide then c.item:collide(c.other) end
+           if c.other.collide then c.other:collide(c.item) end
         end
     end
     
@@ -196,7 +196,11 @@ function Player:update(dt)
                 self:setAnim("player_idle_"..postfix)
             end
         else
-            self:setAnim("player_jump_"..postfix)
+            if self.running then
+                self:setAnim("player_jump_run_"..postfix)
+            else
+                self:setAnim("player_jump_"..postfix)
+            end
         end
     end
 

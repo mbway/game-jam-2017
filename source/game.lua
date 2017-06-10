@@ -24,7 +24,7 @@ player = nil
 actorList = nil
 projectileList = nil
 
-local collisions = {}
+local collisions
 
 function game.load()
     love.resize() -- calculate canvas scaling
@@ -65,7 +65,6 @@ function game.load()
     -- (but if a,b is in the list then b,a is not also in the list)
     -- therefore each pair only occurs once
     -- so we can loop over it to handle collisions
-    collisions = {}
     
 end
 
