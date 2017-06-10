@@ -33,7 +33,7 @@ function Actor:attack()
 
 end
 function Actor:special()
-    
+
 end
 function Actor:moveLeft()
 
@@ -71,7 +71,7 @@ function Actor:update(dt)
         self.vx = self.vx + self.ax * dt
         self.vx = clamp(self.vx, -self.vxMax, self.vxMax)
     end
-    
+
     if self.ay == 0 then
         if self.vy > 0 then self.vy = math.max(0, self.vy - self.dragY * dt)
         elseif self.vy < 0 then self.vy = math.min(0, self.vy + self.dragY * dt)
@@ -80,7 +80,7 @@ function Actor:update(dt)
         self.vy = self.vy + self.ay * dt
         self.vy = clamp(self.vy, -self.vyMax, self.vyMax)
     end
-    
+
     local goalX = self.x + self.vx * dt
     local goalY = self.y + self.vy * dt
     local actualX, actualY, collisions, len = world:move(self, goalX, goalY, self.filter)
@@ -112,16 +112,16 @@ end
 
 function Player:update(dt)
     Actor.update(self, dt)
-    
+
     if self.vx > 0 then
         self.facing = "right"
     elseif self.vx < -0 then
         self.facing = "left"
     end
-    
+
     if self:onFloor() then
         self.vy = 0
-        
+
         if math.abs(self.vx) > 0.5 then
             if self.running then
                 self:setAnim("player_run_"..self.facing)
