@@ -166,11 +166,11 @@ function Player:moveRight()
 end
 function Player:jump()
     if self:onFloor() then
-        self.vy = -300
+        self.vy = -250
     end
 end
 function Player:stopJumping()
-    if self.vy > 0 then
+    if self.vy < 0 then
         self.vy = self.vy*0.5
     end
 end
