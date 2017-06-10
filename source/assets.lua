@@ -40,10 +40,12 @@ function assets.playSfx(t)
 end
 
 
-local function addSheet(name, quadw, quadh)
+local function addSheet(prefix, name, quadw, quadh)
     local t = {}
-    t.image = lg.newImage("assets/"..name..".png")
+    t.image = lg.newImage(prefix..name..".png")
     t.quads = makeQuads(t.image, quadw, quadh)
+    t.frames = {}
+    for i=1, #t.quads do t.frames[i]=i end
     assets[name] = t
 end
 
@@ -54,19 +56,19 @@ function assets.load()
     --assets.tiles = lg.newImage("assets/tiles.png")
     --assets.tileqs = makeQuads(assets.tiles, 32, 32)
     
-    addSheet("player/player_jump", 32, 32)
-    addSheet("player/player_jump_aim", 32, 32)
-    addSheet("player/player_jump_aim", 32, 32)
-    addSheet("player/player_jump_left", 32, 32)
-    addSheet("player/player_jump_aim_left", 32, 32)
-    addSheet("player/player_run", 32, 32)
-    addSheet("player/player_run_aim", 32, 32)
-    addSheet("player/player_run_left", 32, 32)
-    addSheet("player/player_run_aim_left", 32, 32)
-    addSheet("player/player_walk", 32, 32)
-    addSheet("player/player_walk_aim", 32, 32)
-    addSheet("player/player_walk_left", 32, 32)
-    addSheet("player/player_walk_aim_left", 32, 32)
+    addSheet("assets/player/", "player_jump_right", 32, 32)
+    addSheet("assets/player/", "player_jump_aim_right", 32, 32)
+    addSheet("assets/player/", "player_jump_aim_right", 32, 32)
+    addSheet("assets/player/", "player_jump_left", 32, 32)
+    addSheet("assets/player/", "player_jump_aim_left", 32, 32)
+    addSheet("assets/player/", "player_run_right", 32, 32)
+    addSheet("assets/player/", "player_run_aim_right", 32, 32)
+    addSheet("assets/player/", "player_run_left", 32, 32)
+    addSheet("assets/player/", "player_run_aim_left", 32, 32)
+    addSheet("assets/player/", "player_walk_right", 32, 32)
+    addSheet("assets/player/", "player_walk_aim_right", 32, 32)
+    addSheet("assets/player/", "player_walk_left", 32, 32)
+    addSheet("assets/player/", "player_walk_aim_left", 32, 32)
     --addSheet "literal_bin_32"
     
 end

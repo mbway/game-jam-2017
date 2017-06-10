@@ -1,5 +1,6 @@
 local HumanController = require "HumanController"
 local Actor = oo.class()
+local Anim = require "anim"
 
 function Actor:init(x, y, w, h)
     world:add(self, x,y,w,h)
@@ -16,6 +17,12 @@ function Actor:init(x, y, w, h)
     self.vxMax = 999
     self.vyMax = 999
     self.controller = nil
+end
+
+function Actor:setAnim(name, restart)
+    self.anim:play(assets[name].frames, restart)
+    self.image = assets[name].image
+    self.quads = assets[name].quads
 end
 
 function Actor:getCenter()
@@ -86,34 +93,60 @@ function Actor:draw()
 end
 
 
+
+
+
 local Player = oo.class(Actor)
 
 function Player:init(x, y)
-    Actor.init(self, x, y, 10, 10)
+    Actor.init(self, x, y, 14, 27)
     self.ay = 500 -- gravity
     self.dragX = 400
     self.controller = HumanController.new(self)
+    self.anim = Anim.new(assets.player_jump_right.frames)
+    self.image = assets.player_jump_right.image
+    self.quads = assets.player_jump_right.quads
+    self.facing = "right"
+    self.running = false
 end
 
 function Player:update(dt)
     Actor.update(self, dt)
     
+    if self.vx > 0 then
+        self.facing = "right"
+    elseif self.vx < -0 then
+        self.facing = "left"
+    end
+    
     if self:onFloor() then
         self.vy = 0
+        
+        if math.abs(self.vx) > 0.5 then
+            if self.running then
+                self:setAnim("player_run_"..self.facing)
+            else
+                self:setAnim("player_walk_"..self.facing)
+            end
+        end
+    else
+        self:setAnim("player_jump_"..self.facing)
     end
+    self.anim:update(dt)
 end
 
 function Player:draw()
     lg.setColor(255,255,0)
     lg.rectangle("fill", self.x, self.y, self.w, self.h)
     lg.setColor(255,255,255)
+    lg.draw(self.image, self.quads[self.anim.frame], self.x-7, self.y-3)
 end
 
 function Player:moveLeft()
-    self.vx = -100
+    self.vx = self.running and -100 or -160
 end
 function Player:moveRight()
-    self.vx = 100
+    self.vx = self.running and 100 or 160
 end
 function Player:jump()
     if self:onFloor() then
