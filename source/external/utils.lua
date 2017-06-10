@@ -39,6 +39,10 @@ function clamp(val, lower, upper)
     return math.min(math.max(val, lower), upper)
 end
 
+function sign(n)
+    return n > 0 and 1 or (n < 0 and -1 or 0)
+end
+
 function printf(fmt, ...)
     return print(fmt:format(...))
 end
