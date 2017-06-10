@@ -80,13 +80,18 @@ function assets.load()
     assets["player_death_right"].frames.loop = false
     addSheet("assets/player/", "player_death_left", 32, 32)
     assets["player_death_left"].frames.loop = false
-    --assets.player_idle_right = oo.aug({}, assets.player_walk_right, {frames = {1}})
-    --addSheet "literal_bin_32"
 
     addSheet("assets/", "bin", 32, 32)
     addSheet("assets/", "bin_death", 32, 32)
     assets["bin_death"].frames.loop = false
     assets["bin_death"].timePerFrame = 1/20
+    assets.bin_idle = oo.aug({}, assets.bin, {frames = {1}})
+
+    addSheet("assets/", "stalker", 32, 32)
+    addSheet("assets/", "stalker_death", 32, 32)
+    assets["stalker_death"].frames.loop = false
+    assets["stalker_death"].timePerFrame = 1/20
+    assets.stalker_idle = oo.aug({}, assets.stalker, {frames = {1}})
 
 end
 
