@@ -21,6 +21,7 @@ function love.resize()
 end
 
 player = nil
+rooms = nil
 actorList = nil
 projectileList = nil
 
@@ -43,15 +44,17 @@ function game.load()
     game.cam = Camera.new(canW/2, canH/2, f)
 
 
-    map = sti("assets/levels/room1.lua", { "bump" })
+    map = sti("assets/levels/world.lua", { "bump" })
 
     actorList = EntityList.new()
     projectileList = EntityList.new()
 
     world = bump.newWorld()
+    rooms = bump.newWorld()
 
     map:bump_init(world)
 
+    -- add actors
     for i, o in ipairs(map.layers.Actors.objects) do
         if o.type == 'trashcan' then
             local e = actors.TrashCan.new(o.x, o.y)
@@ -64,17 +67,29 @@ function game.load()
         end
     end
 
+    -- add room rectangles
+    for i, o in ipairs(map.layers.Rooms.objects) do
+        local room = {
+            name = o.properties.room,
+            x = o.x,
+            y = o.y,
+            w = o.width,
+            h = o.height
+        }
+        rooms:add(room, o.x, o.y, o.width, o.height)
+    end
+
     map:removeLayer('Actors')
+    map:removeLayer('Rooms')
     
     routine = nil
     text = nil
     textRevealed = 0
-    
 end
 
 function game.alreadyCollided(a, b)
     return collisions[a] and collisions[a][b]
-        or (collisions[b] and collisions[b][a]) 
+        or (collisions[b] and collisions[b][a])
 end
 
 function game.addCollision(a, b)
@@ -167,7 +182,15 @@ function game.draw()
     lg.setCanvas()
     lg.setColor(255, 255, 255, 255)
     lg.draw(canvas, canX, canY, 0, canSF, canSF)
+end
 
+function findRoom(x, y)
+    local items, len = rooms:queryPoint(x, y)
+    if len > 0 then
+        return items[1]
+    else
+        return 'none'
+    end
 end
 
 return game
