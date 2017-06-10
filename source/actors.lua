@@ -169,6 +169,11 @@ function Player:jump()
         self.vy = -300
     end
 end
+function Player:stopJumping()
+    if self.vy > 0 then
+        self.vy = self.vy*0.5
+    end
+end
 
 function Player:filter(other)
     -- todo set vely to 0 on colliding downwards
