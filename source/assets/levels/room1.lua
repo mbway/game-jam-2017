@@ -20,8 +20,8 @@ return {
       spacing = 0,
       margin = 0,
       image = "tiles.png",
-      imagewidth = 64,
-      imageheight = 64,
+      imagewidth = 128,
+      imageheight = 128,
       tileoffset = {
         x = 0,
         y = 0
