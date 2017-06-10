@@ -116,7 +116,7 @@ function Player:moveRight()
     self.vx = 100
 end
 function Player:jump()
-    if self.onFloor() then
+    if self:onFloor() then
         self.vy = -300
     end
 end
