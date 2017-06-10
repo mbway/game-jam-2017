@@ -7,15 +7,19 @@ end
 function HumanController:update()
     self.actor.running = input.p1:pressed('run')
 
-    if input.p1:pressed('left') then
+    if input.p1:down('left') then
         self.actor:moveLeft()
-    elseif input.p1:pressed('right') then
+    end
+    if input.p1:down('right') then
         self.actor:moveRight()
-    elseif input.p1:pressed('jump') then
+    end
+    if input.p1:pressed('jump') then
         self.actor:jump()
-    elseif input.p1:pressed('attack') then
+    end
+    if input.p1:pressed('attack') then
         self.actor:attack()
-    elseif input.p1:pressed('special') then
+    end
+    if input.p1:pressed('special') then
         self.actor:special()
     end
 end
