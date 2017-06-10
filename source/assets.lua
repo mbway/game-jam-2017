@@ -87,7 +87,11 @@ function assets.load()
     addSheet("assets/", "bin_death", 32, 32)
     assets["bin_death"].frames.loop = false
     assets["bin_death"].timePerFrame = 1/20
-
+    
+    assets.font = lg.newFont("assets/Little-League.ttf", 5)
+    assets.font_debug = lg.newFont(18)
+    lg.setFont(assets.font)
+    
 end
 
 return assets

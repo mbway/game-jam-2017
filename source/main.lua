@@ -44,6 +44,13 @@ function love.load(arg)
     math.randomseed(os.time())
 
     game.load()
+    
+    game.runScript(function()
+        say "hello world!"
+        say "the quick brown fox jumps over the lazy dog"
+        say "she sell sea shells on the sea shore..."
+        say "ok bye now."
+    end)
 end
 
 
@@ -58,9 +65,11 @@ end
 
 
 function love.draw()
+    lg.setFont(assets.font)
     game.draw()
 
     lg.setColor(100, 100, 100)
+    lg.setFont(assets.font_debug)
     lg.print(string.format('FPS: %d', love.timer.getFPS()), 20, 20)
 end
 
