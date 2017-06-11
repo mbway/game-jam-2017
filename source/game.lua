@@ -43,16 +43,16 @@ function game.load()
     lg.setCanvas(canvas)
     lg.setBlendMode("alpha")
     lg.clear()
-    
+
     signal.clear()
     flux.tweens = {} -- lol hax
-    
+
     local f = 1 -- camera scaling factor
     game.cam = Camera.new(canW/2, canH/2, f)
 
 
-    map = sti("assets/levels/demo_world.lua", { "bump" })
-    
+    map = sti("assets/levels/world_map.lua", { "bump" })
+
     actorList = EntityList.new()
     projectileList = EntityList.new()
     doorsList = EntityList.new()
@@ -62,9 +62,9 @@ function game.load()
     rooms = bump.newWorld()
 
     map:bump_init(world)
-    
+
     game.fadeout = 0
-    
+
     -- add room rectangles
     for i, o in ipairs(map.layers.Rooms.objects) do
         local room = {
@@ -93,8 +93,8 @@ function game.load()
         doorsList:add(door)
         world:add(door, door.x, door.y, door.w, door.h)
     end
-    
-    
+
+
     -- add checkpoints
     for i, o in ipairs(map.layers.Checkpoints.objects) do
         local cp = Checkpoint.new(o.x, o.y, o.width, o.height)
@@ -107,8 +107,8 @@ function game.load()
         if o.type == 'player' then
             local x,y = o.x, o.y
             if Checkpoint.current then
-               x = Checkpoint.current.x 
-               y = Checkpoint.current.y 
+               x = Checkpoint.current.x
+               y = Checkpoint.current.y
             end
             player = actors.Player.new(x, y)
             actorList:add(player)
@@ -121,6 +121,10 @@ function game.load()
                 e = actors.Stalker.new(o.x, o.y, o.properties)
             elseif o.type == 'turret' then
                 e = actors.Turret.new(o.x, o.y, o.properties)
+            elseif o.type == 'octo' then
+                e = actors.Octo.new(o.x, o.y, o.properties)
+            elseif o.type == 'slug' then
+                e = actors.Slug.new(o.x, o.y, o.properties)
             else
                 assert(false, string.format("unknown entity type: %s", o.type))
             end
@@ -139,9 +143,9 @@ function game.load()
         local r = actor.room
         if not r then return end
 
-        local alldead = true
+        local alldead = true -- room done
         for i,e in ipairs(r.enemies) do
-            if not e:isDead() then
+            if e.holdsDoor ~= false and not e:isDead() then
                 alldead = false
             end
         end
@@ -165,11 +169,12 @@ function game.load()
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
     map:removeLayer('Doors')
+    map:removeLayer('Checkpoints')
 
     routine = nil
     text = nil
     textRevealed = 0
-    
+
 end
 
 function game.alreadyCollided(a, b)
@@ -278,6 +283,12 @@ function game.draw()
         lg.printf(text:sub(1,math.floor(textRevealed)), x+2, y, w-4)
         --lg.rectangle("fill", x+2, y+2,)
     end
+
+    player.playerHealthBar:draw()
+
+    lg.setColor(240,240,240)
+    lg.print(string.format('%.1f', love.timer.getTime()-startTime), canW-15, 2)
+
     lg.setColor(0,0,0,game.fadeout)
     lg.rectangle("fill", 0,0,canW,canH)
 

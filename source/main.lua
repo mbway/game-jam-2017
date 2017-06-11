@@ -19,6 +19,9 @@ tileDim = 16
 
 lf, ls, la, lp, lt, li, lg, lm, lj, lw = nil
 
+-- seconds
+startTime = 0
+
 
 currentMusic = nil
 
@@ -47,8 +50,10 @@ function love.load(arg)
 
     math.randomseed(os.time())
 
+    startTime = love.timer.getTime()
+
     game.load()
-    
+
     --game.runScript(function()
     --    say "hello world!"
     --    say "the quick brown fox jumps over the lazy dog"

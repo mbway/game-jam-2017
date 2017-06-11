@@ -1,8 +1,9 @@
 local HumanController = require "HumanController"
 local RushController = require "AI.RushController"
 local TurretController = require "AI.TurretController"
+local ShootController = require "AI.ShootController"
 local Projectile = require "Projectile"
-local HealthBar = require "HealthBar"
+local HealthBar, PlayerHealthBar = unpack(require "HealthBar")
 local Actor = oo.class()
 local Anim = require "anim"
 
@@ -54,8 +55,10 @@ function Actor:moveRight()
     self.vx = 100
 end
 function Actor:jump()
-    if self:onFloor() then
-        self.vy = -100
+    if not self:isDead() then
+        if self:onFloor() then
+            self.vy = -100
+        end
     end
 end
 function Actor:stopJumping()
@@ -81,20 +84,29 @@ function Actor:isDead()
 end
 
 function Actor:onFloor()
-    local _,_,_,len = world:check(self, self.x, self.y+1, self.filter)
+    local _,_,_,len = world:check(self, self.x, self.y+1, isWall)
     return len > 0
 end
 function Actor:touchingWallLeft()
-    local _,_,_,len = world:check(self, self.x-1, self.y, self.filter)
+    local _,_,_,len = world:check(self, self.x-1, self.y, isWall)
     return len > 0
 end
 function Actor:touchingWallRight()
-    local _,_,_,len = world:check(self, self.x+1, self.y, self.filter)
+    local _,_,_,len = world:check(self, self.x+1, self.y, isWall)
     return len > 0
 end
 function Actor:touchingCeiling()
-    local _,_,_,len = world:check(self, self.x, self.y-1, self.filter)
+    local _,_,_,len = world:check(self, self.x, self.y-1, isWall)
     return len > 0
+end
+
+function isWall(item, other)
+    -- wall or door
+    if (other.layer and other.layer.name == 'Walls') or (other.type == 'bars' and other.solid) then
+        return 'slide'
+    else
+        return nil
+    end
 end
 
 -- collision resolution handler
@@ -165,6 +177,10 @@ function Actor:draw()
         local ox, oy, sx = self:spriteOffsets()
         lg.draw(self.image, self.quads[self.anim.frame], self.x+ox, self.y+oy, 0, sx, 1)
     end
+
+    if self.healthBar then
+        self.healthBar:draw()
+    end
 end
 -- based on current direction or other factors, change the offsets for drawing the sprite
 -- return offset x, offset y, scale x
@@ -192,18 +208,21 @@ function Player:init(x, y)
     self.quads = assets.player_jump_right.quads
     self.facing = "right"
     self.running = false
+    self.crouched = false
     self.weaponDrawnTimer = 0
     self.fireRateTimer = 0
-    self.health = 10
+    self.maxHealth = 10
+    self.health = self.maxHealth
     self.invulnTime = 1
     self.vxMax = self.maxWalkVel
     self.footstepSfxTimer = 0
+    self.playerHealthBar = PlayerHealthBar.new(self)
 end
 
 function Player:update(dt)
     self.vxMax = self.running and self.maxRunVel or self.maxWalkVel
     self.ax = 0
-    
+
     Actor.update(self, dt)
 
     if not self:isDead() then
@@ -217,19 +236,21 @@ function Player:update(dt)
         else
             postfix = self.facing
         end
-        
+
         if self:touchingWallLeft() or self:touchingWallRight() then
             self.vx = 0
         end
-        
+
         if self:touchingCeiling() and self.vy < 0 then
-           self.vy = 0 
+            self.vy = 0
         end
-        
+
         if self:onFloor() then
             self.vy = 0
 
-            if math.abs(self.vx) > 0.5 then
+            if self.crouched then
+                self:setAnim("player_crouch_"..self.facing)
+            elseif math.abs(self.vx) > 0.5 then
                 if self.running then
                     self:setAnim("player_run_"..postfix)
                 else
@@ -251,7 +272,7 @@ function Player:update(dt)
             end
         end
     end
-    
+
     self.anim:update(dt)
 end
 
@@ -263,11 +284,20 @@ function Player:attack()
         self.fireRateTimer = 0.1
         local p = nil
         local damage = 1
+        local speed = 250
 
-        if self.facing == 'left' then
-            p = Projectile.new(damage, self.x-10, self.y+9, 5, 2, -250, 0)
+        if self.crouched then
+            if self.facing == 'left' then
+                p = Projectile.new(damage, self.x-11, self.y+13, 5, 2, -speed, 0)
+            else
+                p = Projectile.new(damage, self.x+15, self.y+13, 5, 2, speed, 0)
+            end
         else
-            p = Projectile.new(damage, self.x+17, self.y+9, 5, 2, 250, 0)
+            if self.facing == 'left' then
+                p = Projectile.new(damage, self.x-10, self.y+9, 5, 2, -speed, 0)
+            else
+                p = Projectile.new(damage, self.x+17, self.y+9, 5, 2, speed, 0)
+            end
         end
         projectileList:add(p)
     end
@@ -282,17 +312,21 @@ end
 
 function Player:moveLeft()
     if self:isDead() then return end
-    self.ax = -800
+    if not self.crouched then
+        self.ax = -800
+    end
     self.facing = "left"
 end
 function Player:moveRight()
     if self:isDead() then return end
-    self.ax = 800
+    if not self.crouched then
+        self.ax = 800
+    end
     self.facing = "right"
 end
 function Player:jump()
     if self:isDead() then return end
-    if self:onFloor() then
+    if self:onFloor() and not self.crouched then
         self.vy = -230
     end
 end
@@ -332,6 +366,7 @@ function RushEnemy:init(x, y, w, h, type, sheetName)
     self.patrolRight = x
     self.running = false
     self.footstepSfxTimer = 0
+    self.jumpWhenNear = false
 end
 
 -- get volume of sfx based on distance from player
@@ -353,7 +388,7 @@ function RushEnemy:update(dt)
                 o:takeDamage(1)
             end
         end
-        
+
         self.footstepSfxTimer = self.footstepSfxTimer + math.abs(self.vx * dt)
         if self.footstepSfxTimer > 2 and self.anim.frame == 4 then
             self.footstepSfxTimer = 0
@@ -407,7 +442,8 @@ local TrashCan = oo.class(RushEnemy)
 function TrashCan:init(x, y, properties)
     RushEnemy.init(self, x, y, 16, 22, "trashcan", "bin")
     self.maxHealth = 5
-    self.health = 5
+    self.health = self.maxHealth
+    self.holdsDoor = properties.holdsDoor
     self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
     self.patrolRight = x + (properties.patrolRight or 0) * tileDim
     self.healthBar = HealthBar.new(self, -5)
@@ -421,12 +457,9 @@ function TrashCan:spriteOffsets()
 end
 
 function TrashCan:jump()
-    RushEnemy.jump(self)
-end
-
-function TrashCan:draw()
-    Actor.draw(self)
-    self.healthBar:draw()
+    if not self:isDead() then
+        RushEnemy.jump(self)
+    end
 end
 
 
@@ -435,7 +468,8 @@ local Stalker = oo.class(RushEnemy)
 function Stalker:init(x, y, properties)
     RushEnemy.init(self, x, y, 12, 29, "stalker", "stalker")
     self.maxHealth = 5
-    self.health = 5
+    self.health = self.maxHealth
+    self.holdsDoor = properties.holdsDoor
     self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
     self.patrolRight = x + (properties.patrolRight or 0) * tileDim
     self.healthBar = HealthBar.new(self, -5)
@@ -467,10 +501,6 @@ function Stalker:spriteOffsets()
         return -8, -3, 1
     end
 end
-function Stalker:draw()
-    Actor.draw(self)
-    self.healthBar:draw()
-end
 
 
 local Turret = oo.class(Actor)
@@ -485,12 +515,14 @@ function Turret:init(x, y, properties)
     assert(self.direction == 'N' or self.direction == 'E' or self.direction == 'S' or self.direction == 'W')
     self.maxHealth = 3
     self.health = self.maxHealth
+    self.holdsDoor = properties.holdsDoor
     self.healthBar = HealthBar.new(self, -5)
-    self.controller = TurretController.new(self, properties.cooldown)
+    self.controller = TurretController.new(self, properties.cooldown, properties.initialWait)
 end
 
 function Turret:update(dt)
     Actor.update(self, dt)
+    self.anim:update(dt)
 end
 
 function Turret:attack()
@@ -509,6 +541,8 @@ function Turret:attack()
     elseif self.direction == 'W' then
         p = Projectile.new(damage, self.x-6, self.y+7, 5, 2, -speed, 0)
     end
+
+    self:setAnim('wall_turret', true) -- play animation again
 
     projectileList:add(p)
 end
@@ -535,6 +569,138 @@ function Turret:draw()
     self.healthBar:draw()
 end
 
+local Octo = oo.class(RushEnemy)
+
+function Octo:init(x, y, properties)
+    RushEnemy.init(self, x, y, 16, 16, "octo", "octo")
+    self.maxHealth = 5
+    self.health = self.maxHealth
+    self.holdsDoor = properties.holdsDoor
+    self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
+    self.patrolRight = x + (properties.patrolRight or 0) * tileDim
+    self.healthBar = HealthBar.new(self, -5)
+    self.running = false
+    self.jumpWhenNear = true
+end
+
+function Octo:moveLeft()
+    if not self:isDead() then
+        if self.running then
+            self.vx = -70
+        else
+            self.vx = -60
+        end
+    end
+end
+function Octo:moveRight()
+    if not self:isDead() then
+        if self.running then
+            self.vx = 70
+        else
+            self.vx = 60
+        end
+    end
+end
+function Octo:jump()
+    if not self:isDead() then
+        if self:onFloor() then
+            self.vy = -150
+        end
+    end
+end
+function Octo:spriteOffsets()
+    if self.facing == 'left' then
+        return 16, 0, -1
+    else
+        return 0, 0, 1
+    end
+end
+
+
+
+local Slug = oo.class(Actor)
+
+function Slug:init(x, y, properties)
+    Actor.init(self, 'slug', x, y, 25, 20)
+    self.maxHealth = 5
+    self.health = self.maxHealth
+    self.holdsDoor = properties.holdsDoor
+    self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
+    self.patrolRight = x + (properties.patrolRight or 0) * tileDim
+    self.healthBar = HealthBar.new(self, -5)
+    self.controller = ShootController.new(self)
+
+    self.ay = 500 -- gravity
+    self.dragX = 400
+    self.anim = Anim.new(assets['slug'].frames)
+    self:setAnim('slug')
+    self.facing = "right"
+    self.running = false
+    self.jumpWhenNear = false
+end
+
+function Slug:moveLeft()
+    if not self:isDead() then
+        if self.running then
+            self.vx = -60
+        else
+            self.vx = -60
+        end
+    end
+end
+function Slug:moveRight()
+    if not self:isDead() then
+        if self.running then
+            self.vx = 60
+        else
+            self.vx = 60
+        end
+    end
+end
+function Slug:spriteOffsets()
+    if self.facing == 'left' then
+        return 27, -11, -1
+    else
+        return 0, -11, 1
+    end
+end
+function Slug:update(dt)
+    local collisions, len = Actor.update(self, dt)
+
+    if not self:isDead() then
+        -- handle collisions
+        for i=1,len do
+            local o = collisions[i].other
+            if o.type == 'player' then
+                o:takeDamage(1)
+            end
+        end
+
+        if math.abs(self.vx) < 1 then
+            self:setAnim('slug_idle')
+        else
+            self:setAnim('slug')
+        end
+    end
+
+    if self.vx > 0 then
+        self.facing = "right"
+    elseif self.vx < -0 then
+        self.facing = "left"
+    end
+
+    if self:onFloor() then
+        self.vy = 0
+    end
+
+    self.anim:update(dt)
+end
+
+function Slug:die()
+    Actor.die(self)
+    self:setAnim('slug_death')
+end
+
 
 
 return {
@@ -542,5 +708,7 @@ return {
     Player = Player,
     TrashCan = TrashCan,
     Stalker = Stalker,
-    Turret = Turret
+    Turret = Turret,
+    Octo = Octo,
+    Slug = Slug
 }

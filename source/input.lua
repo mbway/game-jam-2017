@@ -6,6 +6,7 @@ local controls = {
     right   = {'key:right',          'button:dpright', 'axis:leftx+'},
     run     = {'key:lshift',         'button:leftshoulder'},
     jump    = {'key:x', 'key:space', 'button:a'},
+    crouch  = {'key:down',           'button:dpdown'},
     attack  = {'key:c',              'button:x'},
     special = {'key:c',              'button:b'}
 }

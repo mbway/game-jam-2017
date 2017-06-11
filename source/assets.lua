@@ -73,6 +73,8 @@ function assets.load()
     --assets.tiles = lg.newImage("assets/tiles.png")
     --assets.tileqs = makeQuads(assets.tiles, 32, 32)
 
+    addSheet("assets/player/", "player_crouch_right", 32, 32)
+    addSheet("assets/player/", "player_crouch_left", 32, 32)
     addSheet("assets/player/", "player_jump_right", 32, 32)
     addSheet("assets/player/", "player_jump_left", 32, 32)
     addSheet("assets/player/", "player_jump_aim_right", 32, 32)
@@ -108,7 +110,7 @@ function assets.load()
     assets.font_debug = lg.newFont(18)
     lg.setFont(assets.font)
 
-    assets.bin_idle = oo.aug({}, assets.bin, {frames = {1}})
+    assets.bin_idle = oo.aug({}, assets.bin_death, {frames = {2}})
 
     addSheet("assets/", "stalker", 32, 32)
     addSheet("assets/", "stalker_run", 32, 32)
@@ -116,7 +118,7 @@ function assets.load()
     assets["stalker_death"].frames.loop = false
     assets["stalker_death"].timePerFrame = 1/20
     assets.stalker_idle = oo.aug({}, assets.stalker, {frames = {1}})
-    
+
     assets.footstep = {
         la.newSource("assets/sfx/footstep1.ogg", "static"),
         la.newSource("assets/sfx/footstep2.ogg", "static")
@@ -138,6 +140,22 @@ function assets.load()
     
     
     addSheet("assets/", "wall_turret", 16, 16)
+    assets["wall_turret"].frames.loop = false
+    assets["wall_turret"].timePerFrame = 1/20
+
+    addSheet("assets/", "octo", 16, 16)
+    addSheet("assets/", "octo_death", 16, 16)
+    assets["octo_death"].frames.loop = false
+    assets["octo_death"].timePerFrame = 1/20
+    assets.octo_idle = oo.aug({}, assets.octo, {frames = {1}})
+    assets.octo_run = assets.octo
+
+    addSheet("assets/", "slug", 32, 32)
+    assets.slug_idle = oo.aug({}, assets.slug, {frames = {1}})
+    assets.slug_death = oo.aug({}, assets.slug, {frames = {1}})
+    assets["slug_death"].frames.loop = false
+    addSheet("assets/", "slug_projectile", 32, 32)
+    addSheet("assets/", "slug_attack", 32, 32)
 
 
     assets.door_bars = lg.newImage("assets/door_bars.png")

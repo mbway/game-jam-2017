@@ -1,11 +1,12 @@
 local TurretController = oo.class()
 
-function TurretController:init(actor, cooldown)
+function TurretController:init(actor, cooldown, initialWait)
     self.actor = actor
     self.target = nil
     self.attack = 1
     self.cooldown = cooldown or 0.2
-    self.cooldownTimer = self.cooldown
+    self.initialWait = initialWait or 0.0
+    self.cooldownTimer = self.initialWait
     self.room = findRoom(self.actor)
     assert(self.room)
 end

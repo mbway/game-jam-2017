@@ -43,11 +43,11 @@ function Door:update(dt)
     if self.horizontal then
         self.variablePart = (self.w-16)*(1-self.openAmount)
         self.variableScale = self.variablePart/16
-        world:update(self, self.x, self.y, math.max(1, self.variablePart), self.h)
+        world:update(self, self.x, self.y, math.max(1, self.variablePart)+16, self.h)
     else
         self.variablePart = (self.h-16)*(1-self.openAmount)
         self.variableScale = self.variablePart/16
-        world:update(self, self.x, self.y, self.w, math.max(1, self.variablePart))
+        world:update(self, self.x, self.y, self.w, math.max(1, self.variablePart)+16)
     end
 end
 
