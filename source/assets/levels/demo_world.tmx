@@ -370,8 +370,8 @@
     <property name="holdsDoor" type="bool" value="false"/>
    </properties>
   </object>
-  <object id="29" name="octo" type="octo" x="1232" y="1327" width="16" height="16"/>
-  <object id="33" name="octo" type="octo" x="816" y="1328" width="16" height="16"/>
+  <object id="29" name="octo" type="octo" x="1184" y="1360" width="16" height="16"/>
+  <object id="33" name="octo" type="octo" x="880" y="1328" width="16" height="16"/>
   <object id="43" name="turret" type="turret" x="1264" y="1392" width="16" height="16">
    <properties>
     <property name="cooldown" type="float" value="1"/>

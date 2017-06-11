@@ -66,6 +66,8 @@ function assets.load()
     --assets.tiles = lg.newImage("assets/tiles.png")
     --assets.tileqs = makeQuads(assets.tiles, 32, 32)
 
+    addSheet("assets/player/", "player_crouch_right", 32, 32)
+    addSheet("assets/player/", "player_crouch_left", 32, 32)
     addSheet("assets/player/", "player_jump_right", 32, 32)
     addSheet("assets/player/", "player_jump_left", 32, 32)
     addSheet("assets/player/", "player_jump_aim_right", 32, 32)

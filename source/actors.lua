@@ -243,7 +243,7 @@ function Player:update(dt)
             self.vy = 0
 
             if self.crouched then
-                self:setAnim("player_crouch"..self.facing)
+                self:setAnim("player_crouch_"..self.facing)
             elseif math.abs(self.vx) > 0.5 then
                 if self.running then
                     self:setAnim("player_run_"..postfix)
@@ -278,11 +278,20 @@ function Player:attack()
         self.fireRateTimer = 0.1
         local p = nil
         local damage = 1
+        local speed = 250
 
-        if self.facing == 'left' then
-            p = Projectile.new(damage, self.x-10, self.y+9, 5, 2, -250, 0)
+        if self.crouched then
+            if self.facing == 'left' then
+                p = Projectile.new(damage, self.x-11, self.y+13, 5, 2, -speed, 0)
+            else
+                p = Projectile.new(damage, self.x+15, self.y+13, 5, 2, speed, 0)
+            end
         else
-            p = Projectile.new(damage, self.x+17, self.y+9, 5, 2, 250, 0)
+            if self.facing == 'left' then
+                p = Projectile.new(damage, self.x-10, self.y+9, 5, 2, -speed, 0)
+            else
+                p = Projectile.new(damage, self.x+17, self.y+9, 5, 2, speed, 0)
+            end
         end
         projectileList:add(p)
     end
