@@ -53,15 +53,15 @@ function game.load()
     game.cam = Camera.new(canW/2, canH/2, f)
 
 
-    --map = sti("assets/levels/world_map.lua", { "bump" })
-    map = sti("assets/levels/demo_world.lua", { "bump" })
+    map = sti("assets/levels/world_map.lua", { "bump" })
+    --map = sti("assets/levels/demo_world.lua", { "bump" })
 
     actorList = EntityList.new()
     projectileList = EntityList.new()
     doorsList = EntityList.new()
     checkpointList = EntityList.new()
     scriptsList = EntityList.new()
-    
+
     world = bump.newWorld()
     rooms = bump.newWorld()
 
@@ -104,7 +104,7 @@ function game.load()
         local cp = Checkpoint.new(o.x, o.y, o.width, o.height)
         checkpointList:add(cp)
     end
-    
+
     -- add scripts
     for i, o in ipairs(map.layers.Scripts.objects) do
         local s = Script.new(o.x, o.y, o.width, o.height, o.properties.content)
@@ -255,7 +255,7 @@ function game.update(dt)
     end
 
     game.cam:lookAt(player.x, player.y)
-    
+
     local r = findRoom(player)
     if r then
         if r.name == "Forest" then

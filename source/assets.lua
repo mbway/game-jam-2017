@@ -132,14 +132,14 @@ function assets.load()
     assets.text_blip = makeSfx("assets/sfx/text_blip_alt.ogg", 1)
     assets.player_hit = makeSfx("assets/sfx/player_hit.wav", 1)
     assets.player_hit = makeSfx("assets/sfx/shoot.wav", 1)
-    
+
     assets.music_construction = makeMusic("assets/music/tomato_construction.ogg")
     assets.music_caves = makeMusic("assets/music/tomato_caves.ogg")
     assets.music_jungle = makeMusic("assets/music/tomato_jungle.ogg")
     assets.music_castle = makeMusic("assets/music/tomato_castle.ogg")
-    
-    
-    
+
+
+
     addSheet("assets/", "wall_turret", 16, 16)
     assets["wall_turret"].frames.loop = false
     assets["wall_turret"].timePerFrame = 1/20
