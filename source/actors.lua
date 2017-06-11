@@ -80,7 +80,19 @@ function Actor:isDead()
 end
 
 function Actor:onFloor()
-    local actualX, actualY, collisions, len = world:check(self, self.x, self.y+1, self.filter)
+    local _,_,_,len = world:check(self, self.x, self.y+1, self.filter)
+    return len > 0
+end
+function Actor:touchingWallLeft()
+    local _,_,_,len = world:check(self, self.x-1, self.y, self.filter)
+    return len > 0
+end
+function Actor:touchingWallRight()
+    local _,_,_,len = world:check(self, self.x+1, self.y, self.filter)
+    return len > 0
+end
+function Actor:touchingCeiling()
+    local _,_,_,len = world:check(self, self.x, self.y-1, self.filter)
     return len > 0
 end
 
@@ -164,6 +176,11 @@ end
 
 local Player = oo.class(Actor)
 
+Player.maxWalkVel = 100
+Player.maxRunVel = 160
+Player.maxHealth = 10
+Player.accelAmount = 800
+
 function Player:init(x, y)
     Actor.init(self, "player", x, y, 10, 28)
     self.ay = 500 -- gravity
@@ -176,20 +193,18 @@ function Player:init(x, y)
     self.running = false
     self.weaponDrawnTimer = 0
     self.fireRateTimer = 0
-    self.maxHealth = 10
     self.health = 10
     self.invulnTime = 1
+    self.vxMax = self.maxWalkVel
 end
 
 function Player:update(dt)
+    self.vxMax = self.running and self.maxRunVel or self.maxWalkVel
+    self.ax = 0
+    
     Actor.update(self, dt)
 
     if not self:isDead() then
-        if self.vx > 0 then
-            self.facing = "right"
-        elseif self.vx < -0 then
-            self.facing = "left"
-        end
 
         self.fireRateTimer = self.fireRateTimer - dt
 
@@ -200,7 +215,15 @@ function Player:update(dt)
         else
             postfix = self.facing
         end
-
+        
+        if self:touchingWallLeft() or self:touchingWallRight() then
+            self.vx = 0
+        end
+        
+        if self:touchingCeiling() and self.vy < 0 then
+           self.vy = 0 
+        end
+        
         if self:onFloor() then
             self.vy = 0
 
@@ -242,7 +265,6 @@ function Player:attack()
         projectileList:add(p)
     end
 end
-
 function Player:spriteOffsets()
     if self.facing == 'left' then
         return -11, -4, 1
@@ -253,16 +275,18 @@ end
 
 function Player:moveLeft()
     if self:isDead() then return end
-    self.vx = self.running and -160 or -100
+    self.ax = -800
+    self.facing = "left"
 end
 function Player:moveRight()
     if self:isDead() then return end
-    self.vx = self.running and 160 or 100
+    self.ax = 800
+    self.facing = "right"
 end
 function Player:jump()
     if self:isDead() then return end
     if self:onFloor() then
-        self.vy = -250
+        self.vy = -230
     end
 end
 function Player:takeDamage(damage)

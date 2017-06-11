@@ -15,8 +15,8 @@ function HealthBar:draw()
         local x, y = self.actor.x+self.ox, self.actor.y+self.oy
         local w = self.actor.health*self.scale
 
-        lg.setColor(0, 0, 0, 255)
-        lg.rectangle('line', x, y, self.maxW, 2)
+        lg.setColor(0, 0, 0, 200)
+        lg.rectangle('fill', x-1, y-1, self.maxW+2, 4)
         lg.setColor(200, 0, 0, 255)
         lg.rectangle('fill', x, y, w, 2)
 

@@ -29,6 +29,11 @@ doorsList = nil
 
 local collisions
 
+-- scripting/text stuff
+local routine = nil
+local text = nil
+local textRevealed = 0
+
 function game.load()
     love.resize() -- calculate canvas scaling
 
@@ -130,6 +135,10 @@ function game.load()
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
     map:removeLayer('Doors')
+
+    routine = nil
+    text = nil
+    textRevealed = 0
 end
 
 function game.alreadyCollided(a, b)
@@ -144,15 +153,44 @@ function game.addCollision(a, b)
     collisions[a][b] = true
 end
 
-function game.update(dt)
-    collisions = {}
+function game.runScript(f)
+    setfenv(f, game)
+    routine = coroutine.create(f)
+    coroutine.resume(routine)
+end
 
-    map:update(dt)
-    for e in actorList:each() do
-        e:update(dt)
-    end
-    for p in projectileList:each() do
-        p:update(dt)
+function game.say(str)
+    text = str
+    textRevealed = 0
+    coroutine.yield()
+    text = nil
+end
+
+function game.update(dt)
+
+    if text then
+        if textRevealed < #text then
+            textRevealed = math.min(textRevealed + dt*25, #text)
+        else
+            if input.p1:pressed("jump") then
+                if routine and coroutine.status(routine) ~= "dead" then
+                    -- execute the next part of the script
+                    coroutine.resume(routine)
+                end
+            end
+        end
+
+    else
+
+        collisions = {}
+
+        map:update(dt)
+        for e in actorList:each() do
+            e:update(dt)
+        end
+        for p in projectileList:each() do
+            p:update(dt)
+        end
     end
     for d in doorsList:each() do
         d:update(dt)
@@ -195,6 +233,17 @@ function game.draw()
     end
 
     game.cam:detach()
+
+    if text then
+        local x,y,w,h = 50, canH-28, canW-100, 20
+        lg.setColor(0,0,0)
+        lg.rectangle("fill", x,y,w,h)
+        lg.setColor(255,255,255)
+        lg.setLineStyle("rough")
+        lg.rectangle("line", x,y,w,h)
+        lg.printf(text:sub(1,math.floor(textRevealed)), x+2, y, w-4)
+        --lg.rectangle("fill", x+2, y+2,)
+    end
 
     lg.setCanvas()
     lg.setColor(255, 255, 255, 255)
