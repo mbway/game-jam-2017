@@ -139,9 +139,9 @@ function assets.load()
     assets.music_caves = makeMusic("assets/music/tomato_caves.ogg")
     assets.music_jungle = makeMusic("assets/music/tomato_jungle.ogg")
     assets.music_castle = makeMusic("assets/music/tomato_castle.ogg")
-    
-    
-    
+
+
+
     addSheet("assets/", "wall_turret", 16, 16)
     assets["wall_turret"].frames.loop = false
     assets["wall_turret"].timePerFrame = 1/20
