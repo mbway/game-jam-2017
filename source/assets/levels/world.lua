@@ -8,7 +8,7 @@ return {
   height = 100,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 24,
+  nextobjectid = 27,
   properties = {},
   tilesets = {
     {
@@ -614,6 +614,44 @@ return {
             ["isOpen"] = false,
             ["room"] = "B"
           }
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "Checkpoints",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {},
+      objects = {
+        {
+          id = 24,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 1417,
+          y = 1411.33,
+          width = 25,
+          height = 25,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 26,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 1221.83,
+          y = 1555.5,
+          width = 25,
+          height = 25,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

@@ -338,7 +338,6 @@ local function attenuate(x1,y1)
     local x2, y2 = player.x, player.y
     local dsq = (x2-x1)^2 + (y2-y1)^2
     local res = math.max(0, 1 - dsq * 0.000005)
-    print(dsq, res)
     return res
 end
 
