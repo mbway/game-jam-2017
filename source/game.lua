@@ -261,7 +261,7 @@ function game.update(dt)
         if r.name == "Forest" then
             setMusic(assets.music_jungle)
         elseif r.name == "Construction" then
-            setMusic(assets.music_jungle)
+            setMusic(assets.music_construction)
         elseif r.name == "Castle" then
             setMusic(assets.music_castle)
         elseif r.name == "Caves" then
