@@ -5,6 +5,7 @@ local bumpDebug = require "external.bump_debug"
 local actors = require "actors"
 local Door = require "Door"
 local EntityList = require "entitylist"
+local Checkpoint = require "checkpoint"
 
 local game = {}
 
@@ -26,6 +27,7 @@ rooms = nil
 actorList = nil
 projectileList = nil
 doorsList = nil
+checkpointList = nil
 
 local collisions
 
@@ -41,7 +43,10 @@ function game.load()
     lg.setCanvas(canvas)
     lg.setBlendMode("alpha")
     lg.clear()
-
+    
+    signal.clear()
+    flux.tweens = {} -- lol hax
+    
     local f = 1 -- camera scaling factor
     game.cam = Camera.new(canW/2, canH/2, f)
 
@@ -51,12 +56,15 @@ function game.load()
     actorList = EntityList.new()
     projectileList = EntityList.new()
     doorsList = EntityList.new()
+    checkpointList = EntityList.new()
 
     world = bump.newWorld()
     rooms = bump.newWorld()
 
     map:bump_init(world)
-
+    
+    game.fadeout = 0
+    
     -- add room rectangles
     for i, o in ipairs(map.layers.Rooms.objects) do
         local room = {
@@ -85,12 +93,24 @@ function game.load()
         doorsList:add(door)
         world:add(door, door.x, door.y, door.w, door.h)
     end
+    
+    
+    -- add checkpoints
+    for i, o in ipairs(map.layers.Checkpoints.objects) do
+        local cp = Checkpoint.new(o.x, o.y, o.width, o.height)
+        checkpointList:add(cp)
+    end
 
 
     -- add actors
     for i, o in ipairs(map.layers.Actors.objects) do
         if o.type == 'player' then
-            player = actors.Player.new(o.x, o.y)
+            local x,y = o.x, o.y
+            if Checkpoint.current then
+               x = Checkpoint.current.x 
+               y = Checkpoint.current.y 
+            end
+            player = actors.Player.new(x, y)
             actorList:add(player)
         else
             -- enemies
@@ -141,6 +161,14 @@ function game.load()
             end
         end
     end)
+    signal.register('death', function(actor)
+        if actor == player then
+            flux.to(game, 2.0, {fadeout = 255})
+            :oncomplete(function()
+                game.load()
+            end)
+        end
+    end)
 
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
@@ -149,6 +177,7 @@ function game.load()
     routine = nil
     text = nil
     textRevealed = 0
+    
 end
 
 function game.alreadyCollided(a, b)
@@ -200,6 +229,9 @@ function game.update(dt)
         end
         for p in projectileList:each() do
             p:update(dt)
+        end
+        for cp in checkpointList:each() do
+            cp:update(dt)
         end
     end
     for d in doorsList:each() do
@@ -254,6 +286,8 @@ function game.draw()
         lg.printf(text:sub(1,math.floor(textRevealed)), x+2, y, w-4)
         --lg.rectangle("fill", x+2, y+2,)
     end
+    lg.setColor(0,0,0,game.fadeout)
+    lg.rectangle("fill", 0,0,canW,canH)
 
     lg.setCanvas()
     lg.setColor(255, 255, 255, 255)
