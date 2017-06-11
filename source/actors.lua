@@ -2,7 +2,7 @@ local HumanController = require "HumanController"
 local RushController = require "AI.RushController"
 local TurretController = require "AI.TurretController"
 local ShootController = require "AI.ShootController"
-local Projectile = require "Projectile"
+local Projectile, SlugProjectile = unpack(require "Projectile")
 local HealthBar, PlayerHealthBar = unpack(require "HealthBar")
 local Actor = oo.class()
 local Anim = require "anim"
@@ -66,7 +66,7 @@ function Actor:stopJumping()
         self.vy = self.vy*0.5
     end
 end
-function Actor:takeDamage(damage)
+function Actor:takeDamage(damage, source)
     if self.invulnTimer <= 0 then
         self.health = self.health - damage
         if self.health <= 0 and self.solid then
@@ -330,10 +330,19 @@ function Player:jump()
         self.vy = -230
     end
 end
-function Player:takeDamage(damage)
+function Player:takeDamage(damage, source)
     if not debugMode then
         assets.playSfx(assets.player_hit, 0.8)
-        Actor.takeDamage(self, damage)
+        Actor.takeDamage(self, damage, source)
+        local dx, dy = getVectorTo(source, self)
+
+        local strength = math.random(200, 250)
+        if dx > 0 then
+            self.vx = strength
+        elseif dx < 0 then
+            self.vx = -strength
+        end
+        self.vy = -120
     end
 end
 function Player:die()
@@ -385,7 +394,7 @@ function RushEnemy:update(dt)
         for i=1,len do
             local o = collisions[i].other
             if o.type == 'player' then
-                o:takeDamage(1)
+                o:takeDamage(1, self)
             end
         end
 
@@ -618,6 +627,7 @@ end
 
 
 
+
 local Slug = oo.class(Actor)
 
 function Slug:init(x, y, properties)
@@ -672,7 +682,7 @@ function Slug:update(dt)
         for i=1,len do
             local o = collisions[i].other
             if o.type == 'player' then
-                o:takeDamage(1)
+                o:takeDamage(1, self)
             end
         end
 
@@ -694,6 +704,22 @@ function Slug:update(dt)
     end
 
     self.anim:update(dt)
+end
+
+function Slug:attack()
+    if self:isDead() then return end
+    self:setAnim('slug_attack')
+
+    local p = nil
+    local damage = 1
+    local speed = 100
+
+    if self.facing == 'left' then
+        p = SlugProjectile.new(damage, self.x-10, self.y, -speed, -50)
+    else
+        p = SlugProjectile.new(damage, self.x+30, self.y, speed, -50)
+    end
+    projectileList:add(p)
 end
 
 function Slug:die()

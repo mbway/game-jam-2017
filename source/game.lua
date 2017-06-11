@@ -53,7 +53,8 @@ function game.load()
     game.cam = Camera.new(canW/2, canH/2, f)
 
 
-    map = sti("assets/levels/world_map.lua", { "bump" })
+    --map = sti("assets/levels/world_map.lua", { "bump" })
+    map = sti("assets/levels/demo_world.lua", { "bump" })
 
     actorList = EntityList.new()
     projectileList = EntityList.new()
@@ -115,9 +116,12 @@ function game.load()
     for i, o in ipairs(map.layers.Actors.objects) do
         if o.type == 'player' then
             local x,y = o.x, o.y
-            if Checkpoint.current then
-               x = Checkpoint.current.x
-               y = Checkpoint.current.y
+            local cp = Checkpoint.current
+            if cp then
+                -- spawn in the middle of the checkpoint
+                -- hard-coded half dimensions for the player hitbox
+                x = cp.x + cp.w/2 - 5
+                y = cp.y + cp.h/2 - 14
             end
             player = actors.Player.new(x, y)
             actorList:add(player)
@@ -166,6 +170,7 @@ function game.load()
             end
         end
     end)
+    -- reset to checkpoint
     signal.register('death', function(actor)
         if actor == player then
             flux.to(game, 2.0, {fadeout = 255})
@@ -297,6 +302,8 @@ function game.draw()
             lg.rectangle('fill', r.x, r.y, r.w, r.h)
         end
     end
+
+    map:drawTileLayer('Foreground')
 
     game.cam:detach()
 

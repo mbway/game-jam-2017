@@ -21,7 +21,7 @@ function Projectile:update(dt)
         local o = collisions[i]
         if o.health ~= nil then -- if damagable (has health)
             if o.solid then
-                o:takeDamage(self.damage)
+                o:takeDamage(self.damage, self)
                 hit = true
             else
                 -- no hit
@@ -48,4 +48,31 @@ function Projectile:filter()
     return 'touch'
 end
 
-return Projectile
+function Projectile:getCenter()
+    return self.x+self.w/2, self.y+self.h/2
+end
+
+
+
+local SlugProjectile = oo.class(Projectile)
+
+function SlugProjectile:init(damage, x, y, vx, vy)
+    Projectile.init(self, damage, x, y, 5, 5, vx, vy)
+    self.gravity = math.random(100, 300)
+
+    self.anim = Anim.new(assets['slug_projectile'].frames)
+end
+function SlugProjectile:update(dt)
+    Projectile.update(self, dt)
+    self.anim:update(dt)
+    self.vy = self.vy + self.gravity*dt
+end
+function SlugProjectile:draw()
+    lg.draw(assets.slug_projectile.image, assets.slug_projectile.quads[self.anim.frame], self.x, self.y, 0)
+end
+
+
+return {
+    Projectile,
+    SlugProjectile
+}

@@ -157,6 +157,8 @@ function assets.load()
     assets["slug_death"].frames.loop = false
     addSheet("assets/", "slug_projectile", 32, 32)
     addSheet("assets/", "slug_attack", 32, 32)
+    assets["slug_attack"].frames.loop = false
+    addSheet("assets/", "slug_projectile", 5, 5)
 
 
     assets.door_bars = lg.newImage("assets/door_bars.png")
