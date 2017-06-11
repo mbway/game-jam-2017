@@ -57,7 +57,10 @@ function game.load()
     -- add actors
     for i, o in ipairs(map.layers.Actors.objects) do
         if o.type == 'trashcan' then
-            local e = actors.TrashCan.new(o.x, o.y)
+            local e = actors.TrashCan.new(o.x, o.y, o.properties)
+            actorList:add(e)
+        elseif o.type == 'stalker' then
+            local e = actors.Stalker.new(o.x, o.y, o.properties)
             actorList:add(e)
         elseif o.type == 'player' then
             player = actors.Player.new(o.x, o.y)
@@ -70,11 +73,15 @@ function game.load()
     -- add room rectangles
     for i, o in ipairs(map.layers.Rooms.objects) do
         local room = {
-            name = o.properties.room,
+            name = o.name,
             x = o.x,
             y = o.y,
             w = o.width,
-            h = o.height
+            h = o.height,
+            -- random color
+            colR = math.random(0, 255),
+            colG = math.random(0, 255),
+            colB = math.random(0, 255)
         }
         rooms:add(room, o.x, o.y, o.width, o.height)
     end
@@ -137,6 +144,7 @@ function game.update(dt)
         for p in projectileList:each() do
             p:update(dt)
         end
+
     end
     
     game.cam:lookAt(player.x, player.y)
@@ -164,6 +172,12 @@ function game.draw()
         lg.setColor(255, 0, 0)
         bumpDebug.draw(world)
         map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
+        local items, len = rooms:getItems()
+        for i=1,len do
+            local r = items[i]
+            lg.setColor(r.colR, r.colG, r.colB, 80)
+            lg.rectangle('fill', r.x, r.y, r.w, r.h)
+        end
     end
     
     game.cam:detach()

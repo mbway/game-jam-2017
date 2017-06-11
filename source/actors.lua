@@ -1,12 +1,14 @@
 local HumanController = require "HumanController"
 local RushController = require "AI.RushController"
 local Projectile = require "Projectile"
+local HealthBar = require "HealthBar"
 local Actor = oo.class()
 local Anim = require "anim"
 
 function Actor:init(type, x, y, w, h)
     world:add(self, x, y, w, h)
     self.type = type
+    self.maxHealth = math.huge
     self.health = math.huge
     self.x = x
     self.y = y
@@ -76,7 +78,19 @@ function Actor:isDead()
 end
 
 function Actor:onFloor()
-    local actualX, actualY, collisions, len = world:check(self, self.x, self.y+1, self.filter)
+    local _,_,_,len = world:check(self, self.x, self.y+1, self.filter)
+    return len > 0
+end
+function Actor:touchingWallLeft()
+    local _,_,_,len = world:check(self, self.x-1, self.y, self.filter)
+    return len > 0
+end
+function Actor:touchingWallRight()
+    local _,_,_,len = world:check(self, self.x+1, self.y, self.filter)
+    return len > 0
+end
+function Actor:touchingCeiling()
+    local _,_,_,len = world:check(self, self.x, self.y-1, self.filter)
     return len > 0
 end
 
@@ -92,7 +106,7 @@ function Actor:filter(other)
 end
 
 function Actor:collide(other)
-    
+
 end
 
 
@@ -123,7 +137,7 @@ function Actor:update(dt)
     local goalX = self.x + self.vx * dt
     local goalY = self.y + self.vy * dt
     local actualX, actualY, collisions, len = world:move(self, goalX, goalY, self.filter)
-    
+
     for i,c in ipairs(collisions) do
         if not game.alreadyCollided(c.item, c.other) then
            game.addCollision(c.item, c.other)
@@ -131,21 +145,39 @@ function Actor:update(dt)
            if c.other.collide then c.other:collide(c.item) end
         end
     end
-    
+
     self.x = actualX
     self.y = actualY
     return collisions, len
 end
 
 function Actor:draw()
+    if debugMode then
+        lg.setColor(0,0,255)
+        lg.rectangle("fill", self.x, self.y, self.w, self.h)
+        lg.setColor(255,255,255)
+    end
 
+    if self:isDead() or self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
+        local ox, oy, sx = self:spriteOffsets()
+        lg.draw(self.image, self.quads[self.anim.frame], self.x+ox, self.y+oy, 0, sx, 1)
+    end
+end
+-- based on current direction or other factors, change the offsets for drawing the sprite
+-- return offset x, offset y, scale x
+function Actor:spriteOffsets()
+    return 0, 0, 1
 end
 
 
 
 
-
 local Player = oo.class(Actor)
+
+Player.maxWalkVel = 100
+Player.maxRunVel = 160
+Player.maxHealth = 10
+Player.accelAmount = 800
 
 function Player:init(x, y)
     Actor.init(self, "player", x, y, 10, 28)
@@ -161,17 +193,16 @@ function Player:init(x, y)
     self.fireRateTimer = 0
     self.health = 10
     self.invulnTime = 1
+    self.vxMax = self.maxWalkVel
 end
 
 function Player:update(dt)
+    self.vxMax = self.running and self.maxRunVel or self.maxWalkVel
+    self.ax = 0
+    
     Actor.update(self, dt)
 
     if not self:isDead() then
-        if self.vx > 0 then
-            self.facing = "right"
-        elseif self.vx < -0 then
-            self.facing = "left"
-        end
 
         self.fireRateTimer = self.fireRateTimer - dt
 
@@ -182,7 +213,15 @@ function Player:update(dt)
         else
             postfix = self.facing
         end
-
+        
+        if self:touchingWallLeft() or self:touchingWallRight() then
+            self.vx = 0
+        end
+        
+        if self:touchingCeiling() and self.vy < 0 then
+           self.vy = 0 
+        end
+        
         if self:onFloor() then
             self.vy = 0
 
@@ -224,35 +263,33 @@ function Player:attack()
         projectileList:add(p)
     end
 end
-
-function Player:draw()
-    if debugMode then
-        lg.setColor(0,0,255)
-        lg.rectangle("fill", self.x, self.y, self.w, self.h)
-        lg.setColor(255,255,255)
-    end
-
-    if self:isDead() or self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
-        if self.facing == 'left' then
-            lg.draw(self.image, self.quads[self.anim.frame], self.x-11, self.y-4)
-        else
-            lg.draw(self.image, self.quads[self.anim.frame], self.x-9, self.y-4)
-        end
+function Player:spriteOffsets()
+    if self.facing == 'left' then
+        return -11, -4, 1
+    else
+        return -9, -4, 1
     end
 end
 
 function Player:moveLeft()
     if self:isDead() then return end
-    self.vx = self.running and -160 or -100
+    self.ax = -800
+    self.facing = "left"
 end
 function Player:moveRight()
     if self:isDead() then return end
-    self.vx = self.running and 160 or 100
+    self.ax = 800
+    self.facing = "right"
 end
 function Player:jump()
     if self:isDead() then return end
     if self:onFloor() then
-        self.vy = -250
+        self.vy = -230
+    end
+end
+function Player:takeDamage(damage)
+    if not debugMode then
+        Actor.takeDamage(self, damage)
     end
 end
 function Player:die()
@@ -268,29 +305,43 @@ end
 
 
 
-local TrashCan = oo.class(Actor)
+local RushEnemy = oo.class(Actor)
 
-function TrashCan:init(x, y)
-    Actor.init(self, "trashcan", x, y, 16, 26)
+function RushEnemy:init(x, y, w, h, type, sheetName)
+    Actor.init(self, type, x, y, w, h)
+    self.sheetName = sheetName
     self.ay = 500 -- gravity
     self.dragX = 400
     self.controller = RushController.new(self)
-    self.anim = Anim.new(assets.bin.frames)
-    self.image = assets.bin.image
-    self.quads = assets.bin.quads
+    self.anim = Anim.new(assets[sheetName].frames)
+    self:setAnim(sheetName)
     self.facing = "right"
+    self.maxHealth = 5
     self.health = 5
+    self.patrolLeft  = x
+    self.patrolRight = x
+    self.running = false
 end
 
-function TrashCan:update(dt)
+function RushEnemy:update(dt)
     local collisions, len = Actor.update(self, dt)
 
     if not self:isDead() then
+        -- handle collisions
         for i=1,len do
-            -- handle collisions
             local o = collisions[i].other
             if o.type == 'player' then
                 o:takeDamage(1)
+            end
+        end
+
+        if math.abs(self.vx) < 1 then
+            self:setAnim(self.sheetName..'_idle')
+        else
+            if self.running then
+                self:setAnim(self.sheetName..'_run')
+            else
+                self:setAnim(self.sheetName)
             end
         end
     end
@@ -308,46 +359,94 @@ function TrashCan:update(dt)
     self.anim:update(dt)
 end
 
-function TrashCan:moveLeft()
+function RushEnemy:moveLeft()
     if not self:isDead() then
         self.vx = -50
     end
 end
-function TrashCan:moveRight()
+function RushEnemy:moveRight()
     if not self:isDead() then
         self.vx = 50
     end
 end
-
-function TrashCan:attack()
-
+function RushEnemy:die()
+    Actor.die(self)
+    self:setAnim(self.sheetName.."_death")
 end
 
-function TrashCan:die()
-    Actor.die(self)
-    self:setAnim("bin_death")
+
+
+
+local TrashCan = oo.class(RushEnemy)
+
+function TrashCan:init(x, y, properties)
+    RushEnemy.init(self, x, y, 16, 22, "trashcan", "bin")
+    self.maxHealth = 5
+    self.health = 5
+    self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
+    self.patrolRight = x + (properties.patrolRight or 0) * tileDim
+    self.healthBar = HealthBar.new(self, -5)
+end
+function TrashCan:spriteOffsets()
+    if self.facing == 'left' then
+        return -8, -10, 1
+    else
+        return 24, -10, -1
+    end
 end
 
 function TrashCan:draw()
-    if debugMode then
-        lg.setColor(255,0,0)
-        lg.rectangle("fill", self.x, self.y, self.w, self.h)
-        lg.setColor(255,255,255)
-    end
-    if self:isDead() or self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
-        if self.facing == 'left' then
-            lg.draw(self.image, self.quads[self.anim.frame], self.x-8, self.y-6)
-        else
-            lg.draw(self.image, self.quads[self.anim.frame], self.x+24, self.y-6, 0, -1, 1)
-        end
-    end
+    Actor.draw(self)
+    self.healthBar:draw()
 end
 
 
+local Stalker = oo.class(RushEnemy)
+
+function Stalker:init(x, y, properties)
+    RushEnemy.init(self, x, y, 12, 29, "stalker", "stalker")
+    self.maxHealth = 5
+    self.health = 5
+    self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
+    self.patrolRight = x + (properties.patrolRight or 0) * tileDim
+    self.healthBar = HealthBar.new(self, -5)
+    self.running = false
+end
+
+function Stalker:moveLeft()
+    if not self:isDead() then
+        if self.running then
+            self.vx = -90
+        else
+            self.vx = -60
+        end
+    end
+end
+function Stalker:moveRight()
+    if not self:isDead() then
+        if self.running then
+            self.vx = 90
+        else
+            self.vx = 60
+        end
+    end
+end
+function Stalker:spriteOffsets()
+    if self.facing == 'left' then
+        return 20, -3, -1
+    else
+        return -8, -3, 1
+    end
+end
+function Stalker:draw()
+    Actor.draw(self)
+    self.healthBar:draw()
+end
 
 
 return {
     Actor = Actor,
     Player = Player,
-    TrashCan = TrashCan
+    TrashCan = TrashCan,
+    Stalker = Stalker
 }

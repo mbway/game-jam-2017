@@ -15,6 +15,8 @@ game = require "game"
 
 debugMode = false -- global debug flag (toggle: F12). Use as you wish
 
+tileDim = 16
+
 lf, ls, la, lp, lt, li, lg, lm, lj, lw = nil
 
 
