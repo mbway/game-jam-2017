@@ -1608,7 +1608,7 @@ say &quot;I have to get out of here.&quot;</property>
   <object id="121" x="608" y="8096" width="32" height="48"/>
  </objectgroup>
  <objectgroup color="#ff0000" name="Actors">
-  <object id="1" name="player" type="player" x="1280" y="5776" width="31.75" height="32"/>
+  <object id="1" name="player" type="player" x="240" y="7936" width="31.75" height="32"/>
   <object id="8" name="turret" type="turret" x="784.333" y="6687.67" width="16" height="16">
    <properties>
     <property name="cooldown" type="float" value="1"/>

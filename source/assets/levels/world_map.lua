@@ -1854,7 +1854,9 @@ return {
       offsetx = 0,
       offsety = 0,
       draworder = "topdown",
-      properties = {},
+      properties = {
+        ["content"] = "say \"I made it...\"\nsay \"I'm alive!\"\nsay \"It's finished.\""
+      },
       objects = {
         {
           id = 2,
@@ -1969,8 +1971,8 @@ return {
           name = "player",
           type = "player",
           shape = "rectangle",
-          x = 1280,
-          y = 5776,
+          x = 240,
+          y = 7936,
           width = 31.75,
           height = 32,
           rotation = 0,
@@ -3552,37 +3554,11 @@ return {
           properties = {}
         },
         {
-          id = 199,
-          name = "stalker",
-          type = "stalker",
-          shape = "rectangle",
-          x = 288,
-          y = 5376,
-          width = 32,
-          height = 32,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
           id = 201,
           name = "stalker",
           type = "stalker",
           shape = "rectangle",
           x = 320,
-          y = 5376,
-          width = 32,
-          height = 32,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 202,
-          name = "stalker",
-          type = "stalker",
-          shape = "rectangle",
-          x = 352,
           y = 5376,
           width = 32,
           height = 32,
@@ -3617,37 +3593,11 @@ return {
           properties = {}
         },
         {
-          id = 205,
-          name = "stalker",
-          type = "stalker",
-          shape = "rectangle",
-          x = 464,
-          y = 5392,
-          width = 32,
-          height = 32,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
           id = 206,
           name = "stalker",
           type = "stalker",
           shape = "rectangle",
           x = 496,
-          y = 5392,
-          width = 32,
-          height = 32,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 207,
-          name = "stalker",
-          type = "stalker",
-          shape = "rectangle",
-          x = 528,
           y = 5392,
           width = 32,
           height = 32,
@@ -3682,37 +3632,11 @@ return {
           properties = {}
         },
         {
-          id = 210,
-          name = "stalker",
-          type = "stalker",
-          shape = "rectangle",
-          x = 688,
-          y = 5408,
-          width = 32,
-          height = 32,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
           id = 211,
           name = "stalker",
           type = "stalker",
           shape = "rectangle",
           x = 736,
-          y = 5408,
-          width = 32,
-          height = 32,
-          rotation = 0,
-          visible = true,
-          properties = {}
-        },
-        {
-          id = 212,
-          name = "stalker",
-          type = "stalker",
-          shape = "rectangle",
-          x = 784,
           y = 5408,
           width = 32,
           height = 32,
