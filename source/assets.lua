@@ -109,7 +109,7 @@ function assets.load()
     assets["stalker_death"].frames.loop = false
     assets["stalker_death"].timePerFrame = 1/20
     assets.stalker_idle = oo.aug({}, assets.stalker, {frames = {1}})
-    
+
     assets.footstep = {
         la.newSource("assets/sfx/footstep1.ogg", "static"),
         la.newSource("assets/sfx/footstep2.ogg", "static")
@@ -122,6 +122,15 @@ function assets.load()
     assets.text_blip = makeSfx("assets/sfx/text_blip_alt.ogg", 1)
 
     addSheet("assets/", "wall_turret", 16, 16)
+    assets["wall_turret"].frames.loop = false
+    assets["octo_death"].timePerFrame = 1/20
+
+    addSheet("assets/", "octo", 16, 16)
+    addSheet("assets/", "octo_death", 16, 16)
+    assets["octo_death"].frames.loop = false
+    assets["octo_death"].timePerFrame = 1/20
+    assets.octo_idle = oo.aug({}, assets.octo, {frames = {1}})
+    assets.octo_run = assets.octo
 
 
     assets.door_bars = lg.newImage("assets/door_bars.png")

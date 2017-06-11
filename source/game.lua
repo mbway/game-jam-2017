@@ -101,6 +101,13 @@ function game.load()
                 e = actors.Stalker.new(o.x, o.y, o.properties)
             elseif o.type == 'turret' then
                 e = actors.Turret.new(o.x, o.y, o.properties)
+            elseif o.type == 'octo' then
+                --TODO
+                e = actors.Octo.new(o.x, o.y, o.properties)
+            elseif o.type == 'slug' then
+                --TODO
+                o.properties.direction = "N"
+                e = actors.Turret.new(o.x, o.y, o.properties)
             else
                 assert(false, string.format("unknown entity type: %s", o.type))
             end
@@ -119,9 +126,10 @@ function game.load()
         local r = actor.room
         if not r then return end
 
-        local alldead = true
+        local alldead = true -- room done
         for i,e in ipairs(r.enemies) do
-            if not e:isDead() then
+            print(e.holdsDoor)
+            if e.holdsDoor ~= false and not e:isDead() then
                 alldead = false
             end
         end
