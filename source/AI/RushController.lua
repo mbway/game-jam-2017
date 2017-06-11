@@ -27,7 +27,7 @@ function RushController:update(dt)
         self.actor.running = true
         local dx, dy = getVectorTo(self.actor, self.target)
 
-        if math.abs(dx) > 12 then
+        if math.abs(dx) > 8 then
             if dx > 0 then
                 self.actor:moveRight()
             elseif dx < 0 then

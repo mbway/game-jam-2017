@@ -1,6 +1,7 @@
 local HumanController = require "HumanController"
 local RushController = require "AI.RushController"
 local TurretController = require "AI.TurretController"
+local ShootController = require "AI.ShootController"
 local Projectile = require "Projectile"
 local HealthBar = require "HealthBar"
 local Actor = oo.class()
@@ -83,20 +84,29 @@ function Actor:isDead()
 end
 
 function Actor:onFloor()
-    local _,_,_,len = world:check(self, self.x, self.y+1, self.filter)
+    local _,_,_,len = world:check(self, self.x, self.y+1, isWall)
     return len > 0
 end
 function Actor:touchingWallLeft()
-    local _,_,_,len = world:check(self, self.x-1, self.y, self.filter)
+    local _,_,_,len = world:check(self, self.x-1, self.y, isWall)
     return len > 0
 end
 function Actor:touchingWallRight()
-    local _,_,_,len = world:check(self, self.x+1, self.y, self.filter)
+    local _,_,_,len = world:check(self, self.x+1, self.y, isWall)
     return len > 0
 end
 function Actor:touchingCeiling()
-    local _,_,_,len = world:check(self, self.x, self.y-1, self.filter)
+    local _,_,_,len = world:check(self, self.x, self.y-1, isWall)
     return len > 0
+end
+
+function isWall(item, other)
+    -- wall or door
+    if (other.layer and other.layer.name == 'Walls') or other.type == 'bars' then
+        return 'slide'
+    else
+        return nil
+    end
 end
 
 -- collision resolution handler
@@ -221,14 +231,17 @@ function Player:update(dt)
         end
 
         if self:touchingWallLeft() or self:touchingWallRight() then
+            print('touching wall')
             self.vx = 0
         end
 
         if self:touchingCeiling() and self.vy < 0 then
-           self.vy = 0
+            print('touching ceiling')
+            self.vy = 0
         end
 
         if self:onFloor() then
+            print('touching floor')
             self.vy = 0
 
             if math.abs(self.vx) > 0.5 then
@@ -599,6 +612,94 @@ end
 
 
 
+local Slug = oo.class(Actor)
+
+function Slug:init(x, y, properties)
+    Actor.init(self, 'slug', x, y, 25, 20)
+    self.maxHealth = 5
+    self.health = self.maxHealth
+    self.holdsDoor = properties.holdsDoor
+    self.patrolLeft  = x - (properties.patrolLeft  or 0) * tileDim
+    self.patrolRight = x + (properties.patrolRight or 0) * tileDim
+    self.healthBar = HealthBar.new(self, -5)
+    self.controller = ShootController.new(self)
+
+    self.ay = 500 -- gravity
+    self.dragX = 400
+    self.anim = Anim.new(assets['slug'].frames)
+    self:setAnim('slug')
+    self.facing = "right"
+    self.running = false
+    self.jumpWhenNear = false
+end
+
+function Slug:moveLeft()
+    if not self:isDead() then
+        if self.running then
+            self.vx = -60
+        else
+            self.vx = -60
+        end
+    end
+end
+function Slug:moveRight()
+    if not self:isDead() then
+        if self.running then
+            self.vx = 60
+        else
+            self.vx = 60
+        end
+    end
+end
+function Slug:spriteOffsets()
+    if self.facing == 'left' then
+        return 27, -11, -1
+    else
+        return 0, -11, 1
+    end
+end
+function Slug:draw()
+    Actor.draw(self)
+    self.healthBar:draw()
+end
+function Slug:update(dt)
+    local collisions, len = Actor.update(self, dt)
+
+    if not self:isDead() then
+        -- handle collisions
+        for i=1,len do
+            local o = collisions[i].other
+            if o.type == 'player' then
+                o:takeDamage(1)
+            end
+        end
+
+        if math.abs(self.vx) < 1 then
+            self:setAnim('slug_idle')
+        else
+            self:setAnim('slug')
+        end
+    end
+
+    if self.vx > 0 then
+        self.facing = "right"
+    elseif self.vx < -0 then
+        self.facing = "left"
+    end
+
+    if self:onFloor() then
+        self.vy = 0
+    end
+
+    self.anim:update(dt)
+end
+
+function Slug:die()
+    Actor.die(self)
+    self:setAnim('slug_death')
+end
+
+
 
 return {
     Actor = Actor,
@@ -606,5 +707,6 @@ return {
     TrashCan = TrashCan,
     Stalker = Stalker,
     Turret = Turret,
-    Octo = Octo
+    Octo = Octo,
+    Slug = Slug
 }

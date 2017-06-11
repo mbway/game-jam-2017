@@ -133,6 +133,13 @@ function assets.load()
     assets.octo_idle = oo.aug({}, assets.octo, {frames = {1}})
     assets.octo_run = assets.octo
 
+    addSheet("assets/", "slug", 32, 32)
+    assets.slug_idle = oo.aug({}, assets.slug, {frames = {1}})
+    assets.slug_death = oo.aug({}, assets.slug, {frames = {1}})
+    assets["slug_death"].frames.loop = false
+    addSheet("assets/", "slug_projectile", 32, 32)
+    addSheet("assets/", "slug_attack", 32, 32)
+
 
     assets.door_bars = lg.newImage("assets/door_bars.png")
     assets.door_bars_top = lg.newQuad(0, 0, 16, 16, 16, 32)

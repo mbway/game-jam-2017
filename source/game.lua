@@ -122,12 +122,9 @@ function game.load()
             elseif o.type == 'turret' then
                 e = actors.Turret.new(o.x, o.y, o.properties)
             elseif o.type == 'octo' then
-                --TODO
                 e = actors.Octo.new(o.x, o.y, o.properties)
             elseif o.type == 'slug' then
-                --TODO
-                o.properties.direction = "N"
-                e = actors.Turret.new(o.x, o.y, o.properties)
+                e = actors.Slug.new(o.x, o.y, o.properties)
             else
                 assert(false, string.format("unknown entity type: %s", o.type))
             end

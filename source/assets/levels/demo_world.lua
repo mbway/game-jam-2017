@@ -8,7 +8,7 @@ return {
   height = 100,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 46,
+  nextobjectid = 50,
   properties = {},
   tilesets = {
     {
@@ -456,8 +456,8 @@ return {
           name = "player",
           type = "player",
           shape = "rectangle",
-          x = 1296,
-          y = 1504,
+          x = 896,
+          y = 1408,
           width = 32,
           height = 32,
           rotation = 0,
@@ -597,8 +597,8 @@ return {
           name = "octo",
           type = "octo",
           shape = "rectangle",
-          x = 1184,
-          y = 1376,
+          x = 1232,
+          y = 1327,
           width = 16,
           height = 16,
           rotation = 0,
@@ -610,8 +610,8 @@ return {
           name = "octo",
           type = "octo",
           shape = "rectangle",
-          x = 896,
-          y = 1360,
+          x = 816,
+          y = 1328,
           width = 16,
           height = 16,
           rotation = 0,
@@ -653,6 +653,19 @@ return {
             ["holdsDoor"] = true,
             ["initialWait"] = 0.66
           }
+        },
+        {
+          id = 47,
+          name = "slug",
+          type = "slug",
+          shape = "rectangle",
+          x = 992,
+          y = 1344,
+          width = 32,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     },
