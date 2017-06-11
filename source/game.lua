@@ -174,7 +174,7 @@ function game.load()
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
     map:removeLayer('Doors')
-    --map:removeLayer('Checkpoints')
+    map:removeLayer('Checkpoints')
 
     routine = nil
     text = nil
@@ -275,6 +275,8 @@ function game.draw()
             lg.rectangle('fill', r.x, r.y, r.w, r.h)
         end
     end
+
+    map:drawTileLayer('Foreground')
 
     game.cam:detach()
 
