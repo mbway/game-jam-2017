@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" nextobjectid="37">
+<map version="1.0.0" orientation="orthogonal" renderorder="right-down" width="100" height="100" tilewidth="16" tileheight="16" nextobjectid="46">
  <tileset firstgid="1" source="tileset.tsx"/>
  <objectgroup color="#00c800" name="Rooms">
   <object id="3" name="A" x="1216" y="1392" width="368" height="192"/>
@@ -353,6 +353,7 @@
     <property name="cooldown" type="float" value="1"/>
     <property name="direction" value="S"/>
     <property name="holdsDoor" type="bool" value="true"/>
+    <property name="initialWait" type="float" value="0"/>
    </properties>
   </object>
   <object id="22" name="turret" type="turret" x="1568" y="1488" width="16" height="16">
@@ -371,6 +372,22 @@
   </object>
   <object id="29" name="octo" type="octo" x="1184" y="1376" width="16" height="16"/>
   <object id="33" name="octo" type="octo" x="896" y="1360" width="16" height="16"/>
+  <object id="43" name="turret" type="turret" x="1264" y="1392" width="16" height="16">
+   <properties>
+    <property name="cooldown" type="float" value="1"/>
+    <property name="direction" value="S"/>
+    <property name="holdsDoor" type="bool" value="true"/>
+    <property name="initialWait" type="float" value="0.33"/>
+   </properties>
+  </object>
+  <object id="44" name="turret" type="turret" x="1248" y="1392" width="16" height="16">
+   <properties>
+    <property name="cooldown" type="float" value="1"/>
+    <property name="direction" value="S"/>
+    <property name="holdsDoor" type="bool" value="true"/>
+    <property name="initialWait" type="float" value="0.66"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup color="#0000c8" name="Doors">
   <object id="15" type="bars" x="1200" y="1520" width="16" height="64">
@@ -390,5 +407,9 @@
     <property name="room" value="C"/>
    </properties>
   </object>
+ </objectgroup>
+ <objectgroup color="#ff00ff" name="Checkpoints">
+  <object id="37" x="1168" y="1520" width="32" height="64"/>
+  <object id="38" x="1136" y="1408" width="64" height="32"/>
  </objectgroup>
 </map>

@@ -43,10 +43,10 @@ function game.load()
     lg.setCanvas(canvas)
     lg.setBlendMode("alpha")
     lg.clear()
-    
+
     signal.clear()
     flux.tweens = {} -- lol hax
-    
+
     local f = 1 -- camera scaling factor
     game.cam = Camera.new(canW/2, canH/2, f)
 
@@ -62,9 +62,9 @@ function game.load()
     rooms = bump.newWorld()
 
     map:bump_init(world)
-    
+
     game.fadeout = 0
-    
+
     -- add room rectangles
     for i, o in ipairs(map.layers.Rooms.objects) do
         local room = {
@@ -93,8 +93,8 @@ function game.load()
         doorsList:add(door)
         world:add(door, door.x, door.y, door.w, door.h)
     end
-    
-    
+
+
     -- add checkpoints
     for i, o in ipairs(map.layers.Checkpoints.objects) do
         local cp = Checkpoint.new(o.x, o.y, o.width, o.height)
@@ -107,8 +107,8 @@ function game.load()
         if o.type == 'player' then
             local x,y = o.x, o.y
             if Checkpoint.current then
-               x = Checkpoint.current.x 
-               y = Checkpoint.current.y 
+               x = Checkpoint.current.x
+               y = Checkpoint.current.y
             end
             player = actors.Player.new(x, y)
             actorList:add(player)
@@ -148,7 +148,6 @@ function game.load()
 
         local alldead = true -- room done
         for i,e in ipairs(r.enemies) do
-            print(e.holdsDoor)
             if e.holdsDoor ~= false and not e:isDead() then
                 alldead = false
             end
@@ -173,11 +172,12 @@ function game.load()
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
     map:removeLayer('Doors')
+    map:removeLayer('Checkpoints')
 
     routine = nil
     text = nil
     textRevealed = 0
-    
+
 end
 
 function game.alreadyCollided(a, b)

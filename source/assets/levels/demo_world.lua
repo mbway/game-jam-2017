@@ -8,7 +8,7 @@ return {
   height = 100,
   tilewidth = 16,
   tileheight = 16,
-  nextobjectid = 37,
+  nextobjectid = 46,
   properties = {},
   tilesets = {
     {
@@ -554,7 +554,8 @@ return {
           properties = {
             ["cooldown"] = 1,
             ["direction"] = "S",
-            ["holdsDoor"] = true
+            ["holdsDoor"] = true,
+            ["initialWait"] = 0
           }
         },
         {
@@ -616,6 +617,42 @@ return {
           rotation = 0,
           visible = true,
           properties = {}
+        },
+        {
+          id = 43,
+          name = "turret",
+          type = "turret",
+          shape = "rectangle",
+          x = 1264,
+          y = 1392,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["cooldown"] = 1,
+            ["direction"] = "S",
+            ["holdsDoor"] = true,
+            ["initialWait"] = 0.33
+          }
+        },
+        {
+          id = 44,
+          name = "turret",
+          type = "turret",
+          shape = "rectangle",
+          x = 1248,
+          y = 1392,
+          width = 16,
+          height = 16,
+          rotation = 0,
+          visible = true,
+          properties = {
+            ["cooldown"] = 1,
+            ["direction"] = "S",
+            ["holdsDoor"] = true,
+            ["initialWait"] = 0.66
+          }
         }
       }
     },
@@ -675,6 +712,44 @@ return {
           properties = {
             ["room"] = "C"
           }
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "Checkpoints",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {},
+      objects = {
+        {
+          id = 37,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 1168,
+          y = 1520,
+          width = 32,
+          height = 64,
+          rotation = 0,
+          visible = true,
+          properties = {}
+        },
+        {
+          id = 38,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 1136,
+          y = 1408,
+          width = 64,
+          height = 32,
+          rotation = 0,
+          visible = true,
+          properties = {}
         }
       }
     }

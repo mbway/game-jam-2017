@@ -16,7 +16,9 @@ function Checkpoint:update(dt)
     local py = player.y+player.h/2
     if px > l and px < r and py > u and py < d then
         if Checkpoint.current ~= self then
-            print("checkpoint!!")
+            if debugMode then
+                print("checkpoint reached")
+            end
             Checkpoint.current = self
         end
     end

@@ -123,7 +123,7 @@ function assets.load()
 
     addSheet("assets/", "wall_turret", 16, 16)
     assets["wall_turret"].frames.loop = false
-    assets["octo_death"].timePerFrame = 1/20
+    assets["wall_turret"].timePerFrame = 1/20
 
     addSheet("assets/", "octo", 16, 16)
     addSheet("assets/", "octo_death", 16, 16)

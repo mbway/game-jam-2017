@@ -493,7 +493,7 @@ function Turret:init(x, y, properties)
     self.health = self.maxHealth
     self.holdsDoor = properties.holdsDoor
     self.healthBar = HealthBar.new(self, -5)
-    self.controller = TurretController.new(self, properties.cooldown)
+    self.controller = TurretController.new(self, properties.cooldown, properties.initialWait)
 end
 
 function Turret:update(dt)
@@ -518,7 +518,7 @@ function Turret:attack()
         p = Projectile.new(damage, self.x-6, self.y+7, 5, 2, -speed, 0)
     end
 
-    setAnim('wall_turret', true) -- play animation again
+    self:setAnim('wall_turret', true) -- play animation again
 
     projectileList:add(p)
 end
