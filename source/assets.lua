@@ -131,8 +131,10 @@ function assets.load()
     }
     assets.text_blip = makeSfx("assets/sfx/text_blip_alt.ogg", 1)
     assets.player_hit = makeSfx("assets/sfx/player_hit.wav", 1)
-    assets.player_hit = makeSfx("assets/sfx/shoot.wav", 1)
-
+    assets.player_hit[1]:setVolume(0.8)
+    assets.shoot = makeSfx("assets/sfx/shoot.wav", 1)
+    assets.shoot[1]:setVolume(0.8)
+    
     assets.music_construction = makeMusic("assets/music/tomato_construction.ogg")
     assets.music_caves = makeMusic("assets/music/tomato_caves.ogg")
     assets.music_jungle = makeMusic("assets/music/tomato_jungle.ogg")

@@ -300,6 +300,8 @@ function Player:attack()
             end
         end
         projectileList:add(p)
+        
+        assets.playSfx(assets.shoot, 0.8)
     end
 end
 function Player:spriteOffsets()
@@ -332,7 +334,7 @@ function Player:jump()
 end
 function Player:takeDamage(damage, source)
     if not debugMode then
-        assets.playSfx(assets.player_hit, 0.8)
+        assets.player_hit[1]:play()
         Actor.takeDamage(self, damage, source)
         local dx, dy = getVectorTo(source, self)
 
