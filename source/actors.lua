@@ -194,6 +194,7 @@ function Player:init(x, y)
     self.health = 10
     self.invulnTime = 1
     self.vxMax = self.maxWalkVel
+    self.footstepSfxTimer = 0
 end
 
 function Player:update(dt)
@@ -231,6 +232,11 @@ function Player:update(dt)
                 else
                     self:setAnim("player_walk_"..postfix)
                 end
+                self.footstepSfxTimer = self.footstepSfxTimer + math.abs(self.vx * dt)
+                if self.footstepSfxTimer > 20 then
+                    self.footstepSfxTimer = 0
+                    assets.playSfx(assets.footstep, 0.2)
+                end
             else
                 self:setAnim("player_idle_"..postfix)
             end
@@ -242,7 +248,7 @@ function Player:update(dt)
             end
         end
     end
-
+    
     self.anim:update(dt)
 end
 
@@ -321,6 +327,16 @@ function RushEnemy:init(x, y, w, h, type, sheetName)
     self.patrolLeft  = x
     self.patrolRight = x
     self.running = false
+    self.footstepSfxTimer = 0
+end
+
+-- get volume of sfx based on distance from player
+local function attenuate(x1,y1)
+    local x2, y2 = player.x, player.y
+    local dsq = (x2-x1)^2 + (y2-y1)^2
+    local res = math.max(0, 1 - dsq * 0.000005)
+    print(dsq, res)
+    return res
 end
 
 function RushEnemy:update(dt)
@@ -333,6 +349,12 @@ function RushEnemy:update(dt)
             if o.type == 'player' then
                 o:takeDamage(1)
             end
+        end
+        
+        self.footstepSfxTimer = self.footstepSfxTimer + math.abs(self.vx * dt)
+        if self.footstepSfxTimer > 2 and self.anim.frame == 4 then
+            self.footstepSfxTimer = 0
+            assets.playSfx(assets.bin_clang, attenuate(self.x,self.y)*0.6)
         end
 
         if math.abs(self.vx) < 1 then
@@ -393,6 +415,10 @@ function TrashCan:spriteOffsets()
     else
         return 24, -10, -1
     end
+end
+
+function TrashCan:jump()
+    RushEnemy.jump(self)
 end
 
 function TrashCan:draw()

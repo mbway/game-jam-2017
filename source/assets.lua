@@ -29,13 +29,23 @@ local function makeSfx(str, count)
     return t
 end
 
+
+local function makeSfx(str, count)
+    local t = {}
+    for i=1, count do
+        t[i] = la.newSource(str)
+    end
+    return t
+end
+
 local sfxIndices = setmetatable({}, {__mode='k'})
 
-function assets.playSfx(t)
+function assets.playSfx(t, vol)
     local n = sfxIndices[t]
     if not n or n > #t then n = 1 end
     t[n]:stop()
     t[n]:play()
+    t[n]:setVolume(vol)
     sfxIndices[t] = n + 1
 end
 
@@ -99,7 +109,17 @@ function assets.load()
     assets["stalker_death"].frames.loop = false
     assets["stalker_death"].timePerFrame = 1/20
     assets.stalker_idle = oo.aug({}, assets.stalker, {frames = {1}})
-
+    
+    assets.footstep = {
+        la.newSource("assets/sfx/footstep1.ogg", "static"),
+        la.newSource("assets/sfx/footstep2.ogg", "static")
+    }
+    assets.bin_clang = {
+        la.newSource("assets/sfx/bin_clang_1.ogg", "static"),
+        la.newSource("assets/sfx/bin_clang_2.ogg", "static"),
+        la.newSource("assets/sfx/bin_clang_3.ogg", "static")
+    }
+    assets.text_blip = makeSfx("assets/sfx/text_blip_alt.ogg", 1)
 end
 
 return assets
