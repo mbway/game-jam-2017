@@ -298,6 +298,7 @@ function Player:jump()
 end
 function Player:takeDamage(damage)
     if not debugMode then
+        assets.playSfx(assets.player_hit, 0.8)
         Actor.takeDamage(self, damage)
     end
 end

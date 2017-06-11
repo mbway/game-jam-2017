@@ -52,7 +52,7 @@ function game.load()
 
 
     map = sti("assets/levels/demo_world.lua", { "bump" })
-
+    
     actorList = EntityList.new()
     projectileList = EntityList.new()
     doorsList = EntityList.new()

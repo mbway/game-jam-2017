@@ -120,6 +120,7 @@ function assets.load()
         la.newSource("assets/sfx/bin_clang_3.ogg", "static")
     }
     assets.text_blip = makeSfx("assets/sfx/text_blip_alt.ogg", 1)
+    assets.player_hit = makeSfx("assets/sfx/player_hit.wav", 1)
 
     addSheet("assets/", "wall_turret", 16, 16)
 
