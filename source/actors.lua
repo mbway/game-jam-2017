@@ -204,6 +204,7 @@ function Player:init(x, y)
     self.quads = assets.player_jump_right.quads
     self.facing = "right"
     self.running = false
+    self.crouched = false
     self.weaponDrawnTimer = 0
     self.fireRateTimer = 0
     self.health = 10
@@ -231,20 +232,19 @@ function Player:update(dt)
         end
 
         if self:touchingWallLeft() or self:touchingWallRight() then
-            print('touching wall')
             self.vx = 0
         end
 
         if self:touchingCeiling() and self.vy < 0 then
-            print('touching ceiling')
             self.vy = 0
         end
 
         if self:onFloor() then
-            print('touching floor')
             self.vy = 0
 
-            if math.abs(self.vx) > 0.5 then
+            if self.crouched then
+                self:setAnim("player_crouch"..self.facing)
+            elseif math.abs(self.vx) > 0.5 then
                 if self.running then
                     self:setAnim("player_run_"..postfix)
                 else
@@ -297,17 +297,21 @@ end
 
 function Player:moveLeft()
     if self:isDead() then return end
-    self.ax = -800
+    if not self.crouched then
+        self.ax = -800
+    end
     self.facing = "left"
 end
 function Player:moveRight()
     if self:isDead() then return end
-    self.ax = 800
+    if not self.crouched then
+        self.ax = 800
+    end
     self.facing = "right"
 end
 function Player:jump()
     if self:isDead() then return end
-    if self:onFloor() then
+    if self:onFloor() and not self.crouched then
         self.vy = -230
     end
 end

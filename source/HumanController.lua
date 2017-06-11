@@ -28,6 +28,8 @@ function HumanController:update()
         self.actor:jump()
     end
 
+    self.actor.crouched = input.p1:down('crouch')
+
     if input.p1:pressed('attack') then
         self.actor:attack()
     end
