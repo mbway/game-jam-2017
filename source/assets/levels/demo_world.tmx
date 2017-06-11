@@ -325,7 +325,7 @@
 </data>
  </layer>
  <objectgroup color="#c80000" name="Actors">
-  <object id="1" name="player" type="player" x="992" y="1408" width="32" height="32"/>
+  <object id="1" name="player" type="player" x="1392" y="1552" width="32" height="32"/>
   <object id="2" name="trashcan" type="trashcan" x="1216" y="1392" width="32" height="32"/>
   <object id="4" name="trashcan" type="trashcan" x="1056" y="1472" width="32" height="32">
    <properties>
@@ -345,14 +345,14 @@
    <properties>
     <property name="cooldown" type="float" value="0.5"/>
     <property name="direction" value="E"/>
-    <property name="holdsDoor" type="bool" value="true"/>
+    <property name="holdsDoor" type="bool" value="false"/>
    </properties>
   </object>
   <object id="21" name="turret" type="turret" x="1280" y="1392" width="16" height="16">
    <properties>
     <property name="cooldown" type="float" value="1"/>
     <property name="direction" value="S"/>
-    <property name="holdsDoor" type="bool" value="true"/>
+    <property name="holdsDoor" type="bool" value="false"/>
     <property name="initialWait" type="float" value="0"/>
    </properties>
   </object>
@@ -367,7 +367,7 @@
    <properties>
     <property name="cooldown" type="float" value="0.2"/>
     <property name="direction" value="N"/>
-    <property name="holdsDoor" type="bool" value="false"/>
+    <property name="holdsDoor" type="bool" value="true"/>
    </properties>
   </object>
   <object id="29" name="octo" type="octo" x="1248" y="1344" width="16" height="16"/>
@@ -376,7 +376,7 @@
    <properties>
     <property name="cooldown" type="float" value="1"/>
     <property name="direction" value="S"/>
-    <property name="holdsDoor" type="bool" value="true"/>
+    <property name="holdsDoor" type="bool" value="false"/>
     <property name="initialWait" type="float" value="0.33"/>
    </properties>
   </object>
@@ -384,7 +384,7 @@
    <properties>
     <property name="cooldown" type="float" value="1"/>
     <property name="direction" value="S"/>
-    <property name="holdsDoor" type="bool" value="true"/>
+    <property name="holdsDoor" type="bool" value="false"/>
     <property name="initialWait" type="float" value="0.66"/>
    </properties>
   </object>

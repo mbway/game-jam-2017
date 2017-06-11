@@ -107,9 +107,12 @@ function game.load()
     for i, o in ipairs(map.layers.Actors.objects) do
         if o.type == 'player' then
             local x,y = o.x, o.y
-            if Checkpoint.current then
-               x = Checkpoint.current.x
-               y = Checkpoint.current.y
+            local cp = Checkpoint.current
+            if cp then
+                -- spawn in the middle of the checkpoint
+                -- hard-coded half dimensions for the player hitbox
+                x = cp.x + cp.w/2 - 5
+                y = cp.y + cp.h/2 - 14
             end
             player = actors.Player.new(x, y)
             actorList:add(player)
@@ -158,6 +161,7 @@ function game.load()
             end
         end
     end)
+    -- reset to checkpoint
     signal.register('death', function(actor)
         if actor == player then
             flux.to(game, 2.0, {fadeout = 255})
@@ -170,7 +174,7 @@ function game.load()
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
     map:removeLayer('Doors')
-    map:removeLayer('Checkpoints')
+    --map:removeLayer('Checkpoints')
 
     routine = nil
     text = nil

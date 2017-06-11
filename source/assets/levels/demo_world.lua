@@ -456,8 +456,8 @@ return {
           name = "player",
           type = "player",
           shape = "rectangle",
-          x = 992,
-          y = 1408,
+          x = 1392,
+          y = 1552,
           width = 32,
           height = 32,
           rotation = 0,
@@ -537,7 +537,7 @@ return {
           properties = {
             ["cooldown"] = 0.5,
             ["direction"] = "E",
-            ["holdsDoor"] = true
+            ["holdsDoor"] = false
           }
         },
         {
@@ -554,7 +554,7 @@ return {
           properties = {
             ["cooldown"] = 1,
             ["direction"] = "S",
-            ["holdsDoor"] = true,
+            ["holdsDoor"] = false,
             ["initialWait"] = 0
           }
         },
@@ -589,7 +589,7 @@ return {
           properties = {
             ["cooldown"] = 0.2,
             ["direction"] = "N",
-            ["holdsDoor"] = false
+            ["holdsDoor"] = true
           }
         },
         {
@@ -632,7 +632,7 @@ return {
           properties = {
             ["cooldown"] = 1,
             ["direction"] = "S",
-            ["holdsDoor"] = true,
+            ["holdsDoor"] = false,
             ["initialWait"] = 0.33
           }
         },
@@ -650,7 +650,7 @@ return {
           properties = {
             ["cooldown"] = 1,
             ["direction"] = "S",
-            ["holdsDoor"] = true,
+            ["holdsDoor"] = false,
             ["initialWait"] = 0.66
           }
         },
