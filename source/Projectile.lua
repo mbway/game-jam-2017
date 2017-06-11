@@ -20,9 +20,11 @@ function Projectile:update(dt)
         -- handle collisions
         local o = collisions[i]
         if o.health ~= nil then -- if damagable (has health)
-            o:takeDamage(self.damage)
             if o.solid then
+                o:takeDamage(self.damage)
                 hit = true
+            else
+                -- no hit
             end
         else
             hit = true
@@ -36,11 +38,8 @@ function Projectile:update(dt)
     self.y = goalY
 end
 
-function Projectile:collide(other)
-    
-end
-
 function Projectile:draw()
+    -- TODO: make fancy
     lg.rectangle('fill', self.x, self.y, self.w, self.h)
 end
 

@@ -12,7 +12,9 @@ function RushController:findTarget()
 
     local isPlayer = function(actor) return actor.type == 'player' end
     local t, dx, dy = actorList:findClosest(self.actor, isPlayer)
-    if findRoom(self.actor.x, self.actor.y).name == findRoom(t.x, t.y).name then
+    local r = findRoom(self.actor)
+    local tRoom = findRoom(t)
+    if r and tRoom and r.name == tRoom.name then
         self.target = t
     else
         self.target = nil

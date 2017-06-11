@@ -8,3 +8,5 @@ a game
     - `http://karai17.github.io/Simple-Tiled-Implementation/modules/sti.html`
 - baton (input library for love)
     - `https://github.com/tesselode/baton`
+- flux (tweening)
+    - `https://github.com/rxi/flux`

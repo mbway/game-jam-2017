@@ -96,11 +96,11 @@ function assets.load()
     addSheet("assets/", "bin_death", 32, 32)
     assets["bin_death"].frames.loop = false
     assets["bin_death"].timePerFrame = 1/20
-    
+
     assets.font = lg.newFont("assets/Little-League.ttf", 5)
     assets.font_debug = lg.newFont(18)
     lg.setFont(assets.font)
-    
+
     assets.bin_idle = oo.aug({}, assets.bin, {frames = {1}})
 
     addSheet("assets/", "stalker", 32, 32)
@@ -120,6 +120,13 @@ function assets.load()
         la.newSource("assets/sfx/bin_clang_3.ogg", "static")
     }
     assets.text_blip = makeSfx("assets/sfx/text_blip_alt.ogg", 1)
+
+    addSheet("assets/", "wall_turret", 16, 16)
+
+
+    assets.door_bars = lg.newImage("assets/door_bars.png")
+    assets.door_bars_top = lg.newQuad(0, 0, 16, 16, 16, 32)
+    assets.door_bars_bottom = lg.newQuad(0, 16, 16, 16, 16, 32)
 end
 
 return assets
