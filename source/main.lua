@@ -47,12 +47,12 @@ function love.load(arg)
 
     game.load()
     
-    game.runScript(function()
-        say "hello world!"
-        say "the quick brown fox jumps over the lazy dog"
-        say "she sell sea shells on the sea shore..."
-        say "ok bye now."
-    end)
+    --game.runScript(function()
+    --    say "hello world!"
+    --    say "the quick brown fox jumps over the lazy dog"
+    --    say "she sell sea shells on the sea shore..."
+    --    say "ok bye now."
+    --end)
 end
 
 
