@@ -51,7 +51,8 @@ function game.load()
     game.cam = Camera.new(canW/2, canH/2, f)
 
 
-    map = sti("assets/levels/world_map.lua", { "bump" })
+    --map = sti("assets/levels/world_map.lua", { "bump" })
+    map = sti("assets/levels/demo_world.lua", { "bump" })
 
     actorList = EntityList.new()
     projectileList = EntityList.new()
