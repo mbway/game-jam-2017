@@ -99,6 +99,8 @@ function game.load()
                 e = actors.TrashCan.new(o.x, o.y, o.properties)
             elseif o.type == 'stalker' then
                 e = actors.Stalker.new(o.x, o.y, o.properties)
+            elseif o.type == 'turret' then
+                e = actors.Turret.new(o.x, o.y, o.properties)
             else
                 assert(false, string.format("unknown entity type: %s", o.type))
             end

@@ -1,5 +1,6 @@
 local HumanController = require "HumanController"
 local RushController = require "AI.RushController"
+local TurretController = require "AI.TurretController"
 local Projectile = require "Projectile"
 local HealthBar = require "HealthBar"
 local Actor = oo.class()
@@ -319,7 +320,7 @@ function RushEnemy:init(x, y, w, h, type, sheetName)
     self:setAnim(sheetName)
     self.facing = "right"
     self.maxHealth = 5
-    self.health = 5
+    self.health = self.maxHealth
     self.patrolLeft  = x
     self.patrolRight = x
     self.running = false
@@ -446,9 +447,74 @@ function Stalker:draw()
 end
 
 
+local Turret = oo.class(Actor)
+
+function Turret:init(x, y, properties)
+    Actor.init(self, "turret", x, y, tileDim, tileDim)
+
+    self.anim = Anim.new(assets.wall_turret.frames)
+    self:setAnim('wall_turret')
+
+    self.direction = properties.direction
+    assert(self.direction == 'N' or self.direction == 'E' or self.direction == 'S' or self.direction == 'W')
+    self.maxHealth = 3
+    self.health = self.maxHealth
+    self.healthBar = HealthBar.new(self, -5)
+    self.controller = TurretController.new(self, properties.cooldown)
+end
+
+function Turret:update(dt)
+    Actor.update(self, dt)
+end
+
+function Turret:attack()
+    if self:isDead() then return end
+
+    local damage = 1
+    local p = nil
+    local speed = 250
+
+    if self.direction == 'N' then
+        p = Projectile.new(damage, self.x+6, self.y-6, 2, 5, 0, -speed)
+    elseif self.direction == 'E' then
+        p = Projectile.new(damage, self.x+16, self.y+6, 5, 2, speed, 0)
+    elseif self.direction == 'S' then
+        p = Projectile.new(damage, self.x+8, self.y+18, 2, 5, 0, speed)
+    elseif self.direction == 'W' then
+        p = Projectile.new(damage, self.x-6, self.y+7, 5, 2, -speed, 0)
+    end
+
+    projectileList:add(p)
+end
+
+function Turret:draw()
+    if debugMode then
+        lg.setColor(0,0,255)
+        lg.rectangle("fill", self.x, self.y, self.w, self.h)
+        lg.setColor(255,255,255)
+    end
+
+    if self:isDead() or self.invulnTimer <= 0 or self.invulnTimer % (2*self.flickerTime) > self.flickerTime then
+        if self.direction == 'N' then
+            lg.draw(self.image, self.quads[self.anim.frame], self.x, self.y+16, -math.pi/2, 1, 1)
+        elseif self.direction == 'E' then
+            lg.draw(self.image, self.quads[self.anim.frame], self.x, self.y, 0, 1, 1)
+        elseif self.direction == 'S' then
+            lg.draw(self.image, self.quads[self.anim.frame], self.x+16, self.y, math.pi/2, 1, 1)
+        elseif self.direction == 'W' then
+            lg.draw(self.image, self.quads[self.anim.frame], self.x+16, self.y+16, math.pi, 1, 1)
+        end
+    end
+
+    self.healthBar:draw()
+end
+
+
+
 return {
     Actor = Actor,
     Player = Player,
     TrashCan = TrashCan,
-    Stalker = Stalker
+    Stalker = Stalker,
+    Turret = Turret
 }

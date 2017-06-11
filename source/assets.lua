@@ -86,11 +86,11 @@ function assets.load()
     addSheet("assets/", "bin_death", 32, 32)
     assets["bin_death"].frames.loop = false
     assets["bin_death"].timePerFrame = 1/20
-    
+
     assets.font = lg.newFont("assets/Little-League.ttf", 5)
     assets.font_debug = lg.newFont(18)
     lg.setFont(assets.font)
-    
+
     assets.bin_idle = oo.aug({}, assets.bin, {frames = {1}})
 
     addSheet("assets/", "stalker", 32, 32)
@@ -99,6 +99,8 @@ function assets.load()
     assets["stalker_death"].frames.loop = false
     assets["stalker_death"].timePerFrame = 1/20
     assets.stalker_idle = oo.aug({}, assets.stalker, {frames = {1}})
+
+    addSheet("assets/", "wall_turret", 16, 16)
 
 
     assets.door_bars = lg.newImage("assets/door_bars.png")
