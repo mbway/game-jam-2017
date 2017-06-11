@@ -103,7 +103,7 @@ function assets.load()
     assets.font_debug = lg.newFont(18)
     lg.setFont(assets.font)
 
-    assets.bin_idle = oo.aug({}, assets.bin, {frames = {1}})
+    assets.bin_idle = oo.aug({}, assets.bin_death, {frames = {2}})
 
     addSheet("assets/", "stalker", 32, 32)
     addSheet("assets/", "stalker_run", 32, 32)

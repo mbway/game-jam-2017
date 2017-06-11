@@ -3,7 +3,7 @@ local RushController = require "AI.RushController"
 local TurretController = require "AI.TurretController"
 local ShootController = require "AI.ShootController"
 local Projectile = require "Projectile"
-local HealthBar = require "HealthBar"
+local HealthBar, PlayerHealthBar = unpack(require "HealthBar")
 local Actor = oo.class()
 local Anim = require "anim"
 
@@ -102,7 +102,7 @@ end
 
 function isWall(item, other)
     -- wall or door
-    if (other.layer and other.layer.name == 'Walls') or other.type == 'bars' then
+    if (other.layer and other.layer.name == 'Walls') or (other.type == 'bars' and other.solid) then
         return 'slide'
     else
         return nil
@@ -177,6 +177,10 @@ function Actor:draw()
         local ox, oy, sx = self:spriteOffsets()
         lg.draw(self.image, self.quads[self.anim.frame], self.x+ox, self.y+oy, 0, sx, 1)
     end
+
+    if self.healthBar then
+        self.healthBar:draw()
+    end
 end
 -- based on current direction or other factors, change the offsets for drawing the sprite
 -- return offset x, offset y, scale x
@@ -207,10 +211,12 @@ function Player:init(x, y)
     self.crouched = false
     self.weaponDrawnTimer = 0
     self.fireRateTimer = 0
-    self.health = 10
+    self.maxHealth = 10
+    self.health = self.maxHealth
     self.invulnTime = 1
     self.vxMax = self.maxWalkVel
     self.footstepSfxTimer = 0
+    self.playerHealthBar = PlayerHealthBar.new(self)
 end
 
 function Player:update(dt)
@@ -456,11 +462,6 @@ function TrashCan:jump()
     end
 end
 
-function TrashCan:draw()
-    Actor.draw(self)
-    self.healthBar:draw()
-end
-
 
 local Stalker = oo.class(RushEnemy)
 
@@ -499,10 +500,6 @@ function Stalker:spriteOffsets()
     else
         return -8, -3, 1
     end
-end
-function Stalker:draw()
-    Actor.draw(self)
-    self.healthBar:draw()
 end
 
 
@@ -618,10 +615,6 @@ function Octo:spriteOffsets()
         return 0, 0, 1
     end
 end
-function Octo:draw()
-    Actor.draw(self)
-    self.healthBar:draw()
-end
 
 
 
@@ -670,10 +663,6 @@ function Slug:spriteOffsets()
     else
         return 0, -11, 1
     end
-end
-function Slug:draw()
-    Actor.draw(self)
-    self.healthBar:draw()
 end
 function Slug:update(dt)
     local collisions, len = Actor.update(self, dt)

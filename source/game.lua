@@ -283,6 +283,12 @@ function game.draw()
         lg.printf(text:sub(1,math.floor(textRevealed)), x+2, y, w-4)
         --lg.rectangle("fill", x+2, y+2,)
     end
+
+    player.playerHealthBar:draw()
+
+    lg.setColor(240,240,240)
+    lg.print(string.format('%.1f', love.timer.getTime()-startTime), canW-15, 2)
+
     lg.setColor(0,0,0,game.fadeout)
     lg.rectangle("fill", 0,0,canW,canH)
 
