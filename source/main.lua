@@ -20,6 +20,8 @@ tileDim = 16
 lf, ls, la, lp, lt, li, lg, lm, lj, lw = nil
 
 
+currentMusic = nil
+
 function love.load(arg)
 
     -- allows debugging (specifically breakpoints) in ZeroBrane
@@ -53,6 +55,9 @@ function love.load(arg)
     --    say "she sell sea shells on the sea shore..."
     --    say "ok bye now."
     --end)
+    
+    currentMusic = assets.music_caves
+    currentMusic:play()
 end
 
 

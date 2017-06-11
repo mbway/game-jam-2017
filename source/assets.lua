@@ -59,6 +59,13 @@ local function addSheet(prefix, name, quadw, quadh)
     assets[name] = t
 end
 
+local function makeMusic(path)
+    local source = la.newSource(path)
+    source:setVolume(0.4)
+    source:setLooping(true)
+    return source
+end
+
 function assets.load()
 
     lg.setDefaultFilter("nearest", "nearest") -- for sharp pixel zooming
@@ -121,7 +128,15 @@ function assets.load()
     }
     assets.text_blip = makeSfx("assets/sfx/text_blip_alt.ogg", 1)
     assets.player_hit = makeSfx("assets/sfx/player_hit.wav", 1)
-
+    assets.player_hit = makeSfx("assets/sfx/shoot.wav", 1)
+    
+    assets.music_construction = la.newSource("assets/music/tomato_construction.ogg")
+    assets.music_caves = la.newSource("assets/music/tomato_caves.ogg")
+    assets.music_jungle = la.newSource("assets/music/tomato_jungle.ogg")
+    assets.music_castle = la.newSource("assets/music/tomato_castle.ogg")
+    
+    
+    
     addSheet("assets/", "wall_turret", 16, 16)
 
 
