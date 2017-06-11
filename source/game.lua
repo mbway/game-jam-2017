@@ -6,6 +6,7 @@ local actors = require "actors"
 local Door = require "Door"
 local EntityList = require "entitylist"
 local Checkpoint = require "checkpoint"
+local Script = require "script"
 
 local game = {}
 
@@ -27,6 +28,7 @@ rooms = nil
 actorList = nil
 projectileList = nil
 doorsList = nil
+scriptsList = nil
 checkpointList = nil
 
 local collisions
@@ -57,7 +59,8 @@ function game.load()
     projectileList = EntityList.new()
     doorsList = EntityList.new()
     checkpointList = EntityList.new()
-
+    scriptsList = EntityList.new()
+    
     world = bump.newWorld()
     rooms = bump.newWorld()
 
@@ -99,6 +102,12 @@ function game.load()
     for i, o in ipairs(map.layers.Checkpoints.objects) do
         local cp = Checkpoint.new(o.x, o.y, o.width, o.height)
         checkpointList:add(cp)
+    end
+    
+    -- add scripts
+    for i, o in ipairs(map.layers.Scripts.objects) do
+        local s = Script.new(o.x, o.y, o.width, o.height, o.properties.content)
+        scriptsList:add(s)
     end
 
 
@@ -170,6 +179,7 @@ function game.load()
     map:removeLayer('Rooms')
     map:removeLayer('Doors')
     map:removeLayer('Checkpoints')
+    map:removeLayer('Scripts')
 
     routine = nil
     text = nil
@@ -207,6 +217,7 @@ function game.update(dt)
     if text then
         if textRevealed < #text then
             textRevealed = math.min(textRevealed + dt*25, #text)
+            assets.text_blip[1]:play()
         else
             if input.p1:pressed("jump") then
                 if routine and coroutine.status(routine) ~= "dead" then
@@ -230,12 +241,28 @@ function game.update(dt)
         for cp in checkpointList:each() do
             cp:update(dt)
         end
+        for cp in scriptsList:each() do
+            cp:update(dt)
+        end
     end
     for d in doorsList:each() do
         d:update(dt)
     end
 
     game.cam:lookAt(player.x, player.y)
+    
+    local r = findRoom(player)
+    if r then
+        if r.name == "Forest" then
+            setMusic(assets.music_jungle)
+        elseif r.name == "Construction" then
+            setMusic(assets.music_jungle)
+        elseif r.name == "Castle" then
+            setMusic(assets.music_castle)
+        elseif r.name == "Caves" then
+            setMusic(assets.music_caves)
+        end
+    end
 end
 
 function game.draw()

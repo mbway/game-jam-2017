@@ -25,6 +25,14 @@ startTime = 0
 
 currentMusic = nil
 
+function setMusic(m)
+    if currentMusic then
+        currentMusic:setVolume(0)
+    end
+    currentMusic = m
+    currentMusic:setVolume(0.4)
+end
+
 function love.load(arg)
 
     -- allows debugging (specifically breakpoints) in ZeroBrane
@@ -61,8 +69,7 @@ function love.load(arg)
     --    say "ok bye now."
     --end)
     
-    currentMusic = assets.music_caves
-    currentMusic:play()
+    setMusic(assets.music_caves)
 end
 
 

@@ -61,8 +61,9 @@ end
 
 local function makeMusic(path)
     local source = la.newSource(path)
-    source:setVolume(0.4)
+    source:setVolume(0)
     source:setLooping(true)
+    source:play() -- all music layers play silently in the background
     return source
 end
 
@@ -132,10 +133,10 @@ function assets.load()
     assets.player_hit = makeSfx("assets/sfx/player_hit.wav", 1)
     assets.player_hit = makeSfx("assets/sfx/shoot.wav", 1)
     
-    assets.music_construction = la.newSource("assets/music/tomato_construction.ogg")
-    assets.music_caves = la.newSource("assets/music/tomato_caves.ogg")
-    assets.music_jungle = la.newSource("assets/music/tomato_jungle.ogg")
-    assets.music_castle = la.newSource("assets/music/tomato_castle.ogg")
+    assets.music_construction = makeMusic("assets/music/tomato_construction.ogg")
+    assets.music_caves = makeMusic("assets/music/tomato_caves.ogg")
+    assets.music_jungle = makeMusic("assets/music/tomato_jungle.ogg")
+    assets.music_castle = makeMusic("assets/music/tomato_castle.ogg")
     
     
     
