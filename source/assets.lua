@@ -95,6 +95,10 @@ function assets.load()
     assets["stalker_death"].timePerFrame = 1/20
     assets.stalker_idle = oo.aug({}, assets.stalker, {frames = {1}})
 
+
+    assets.door_bars = lg.newImage("assets/door_bars.png")
+    assets.door_bars_top = lg.newQuad(0, 0, 16, 16, 16, 32)
+    assets.door_bars_bottom = lg.newQuad(0, 16, 16, 16, 16, 32)
 end
 
 return assets

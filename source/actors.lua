@@ -27,6 +27,7 @@ function Actor:init(type, x, y, w, h)
     self.invulnTimer = 0
     self.invulnTime = 0.16
     self.flickerTime = 0.08
+    self.room = nil -- set when loading the game
 end
 
 function Actor:setAnim(name, restart)
@@ -64,7 +65,7 @@ end
 function Actor:takeDamage(damage)
     if self.invulnTimer <= 0 then
         self.health = self.health - damage
-        if self.health <= 0 then
+        if self.health <= 0 and self.solid then
             self:die()
         end
         self.invulnTimer = self.invulnTime
@@ -72,6 +73,7 @@ function Actor:takeDamage(damage)
 end
 function Actor:die()
     self.solid = false
+    signal.emit('death', self)
 end
 function Actor:isDead()
     return self.health <= 0

@@ -3,6 +3,7 @@ local sti = require "external.sti"
 local bump = require "external.bump"
 local bumpDebug = require "external.bump_debug"
 local actors = require "actors"
+local Door = require "Door"
 local EntityList = require "entitylist"
 
 local game = {}
@@ -24,6 +25,7 @@ player = nil
 rooms = nil
 actorList = nil
 projectileList = nil
+doorsList = nil
 
 local collisions
 
@@ -43,27 +45,12 @@ function game.load()
 
     actorList = EntityList.new()
     projectileList = EntityList.new()
+    doorsList = EntityList.new()
 
     world = bump.newWorld()
     rooms = bump.newWorld()
 
     map:bump_init(world)
-
-    -- add actors
-    for i, o in ipairs(map.layers.Actors.objects) do
-        if o.type == 'trashcan' then
-            local e = actors.TrashCan.new(o.x, o.y, o.properties)
-            actorList:add(e)
-        elseif o.type == 'stalker' then
-            local e = actors.Stalker.new(o.x, o.y, o.properties)
-            actorList:add(e)
-        elseif o.type == 'player' then
-            player = actors.Player.new(o.x, o.y)
-            actorList:add(player)
-        else
-            assert(false, string.format("unknown entity type: %s", o.type))
-        end
-    end
 
     -- add room rectangles
     for i, o in ipairs(map.layers.Rooms.objects) do
@@ -73,6 +60,7 @@ function game.load()
             y = o.y,
             w = o.width,
             h = o.height,
+            enemies = {},
             -- random color
             colR = math.random(0, 255),
             colG = math.random(0, 255),
@@ -81,8 +69,67 @@ function game.load()
         rooms:add(room, o.x, o.y, o.width, o.height)
     end
 
+    -- add doors
+    for i, o in ipairs(map.layers.Doors.objects) do
+        local isOpen = o.properties.isOpen or false
+        local room = o.properties.room
+        assert(room)
+        local type = o.type
+        assert(type)
+        local door = Door.new(o.x, o.y, o.width, o.height, isOpen, room, type)
+        doorsList:add(door)
+        world:add(door, door.x, door.y, door.w, door.h)
+    end
+
+
+    -- add actors
+    for i, o in ipairs(map.layers.Actors.objects) do
+        if o.type == 'player' then
+            player = actors.Player.new(o.x, o.y)
+            actorList:add(player)
+        else
+            -- enemies
+            local e = nil
+            if o.type == 'trashcan' then
+                e = actors.TrashCan.new(o.x, o.y, o.properties)
+            elseif o.type == 'stalker' then
+                e = actors.Stalker.new(o.x, o.y, o.properties)
+            else
+                assert(false, string.format("unknown entity type: %s", o.type))
+            end
+
+            local r = findRoom(e)
+            if r then
+                e.room = r
+                table.insert(r.enemies, e)
+            end
+            actorList:add(e)
+        end
+    end
+
+    -- listen to deaths
+    signal.register('death', function(actor)
+        local r = actor.room
+        if not r then return end
+
+        local alldead = true
+        for i,e in ipairs(r.enemies) do
+            if not e:isDead() then
+                alldead = false
+            end
+        end
+        if alldead then
+            for d in doorsList:each() do
+                if not d.room.isOpen and d.room == r.name then
+                    d:open()
+                end
+            end
+        end
+    end)
+
     map:removeLayer('Actors')
     map:removeLayer('Rooms')
+    map:removeLayer('Doors')
 end
 
 function game.alreadyCollided(a, b)
@@ -107,6 +154,9 @@ function game.update(dt)
     for p in projectileList:each() do
         p:update(dt)
     end
+    for d in doorsList:each() do
+        d:update(dt)
+    end
 
     game.cam:lookAt(player.x, player.y)
 end
@@ -128,6 +178,9 @@ function game.draw()
     for p in projectileList:each() do
         p:draw()
     end
+    for d in doorsList:each() do
+        d:draw()
+    end
 
     if debugMode then
         lg.setColor(255, 0, 0)
@@ -148,12 +201,13 @@ function game.draw()
     lg.draw(canvas, canX, canY, 0, canSF, canSF)
 end
 
-function findRoom(x, y)
+function findRoom(actor)
+    local x, y = actor:getCenter()
     local items, len = rooms:queryPoint(x, y)
     if len > 0 then
         return items[1]
     else
-        return 'none'
+        return nil
     end
 end
 
