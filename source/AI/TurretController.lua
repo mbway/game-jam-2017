@@ -26,7 +26,7 @@ function TurretController:update(dt)
     if self.target then
         self.cooldownTimer = self.cooldownTimer - dt
         if self.cooldownTimer <= 0 then
-            self.cooldownTimer = self.cooldown
+            self.cooldownTimer = self.cooldown + self.cooldownTimer
             self.actor:attack(self.target)
         end
     else

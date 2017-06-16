@@ -68,6 +68,7 @@ function game.load()
     map:bump_init(world)
 
     game.fadeout = 0
+    game.gameTimer = 0
 
     -- add room rectangles
     for i, o in ipairs(map.layers.Rooms.objects) do
@@ -249,6 +250,9 @@ function game.update(dt)
         for cp in scriptsList:each() do
             cp:update(dt)
         end
+        
+        game.gameTimer = game.gameTimer + dt
+        
     end
     for d in doorsList:each() do
         d:update(dt)
@@ -321,7 +325,7 @@ function game.draw()
     player.playerHealthBar:draw()
 
     lg.setColor(240,240,240)
-    lg.print(string.format('%.1f', love.timer.getTime()-startTime), canW-22, 2)
+    lg.print(string.format('%.1f', game.gameTimer), canW-22, 2)
 
     lg.setColor(0,0,0,game.fadeout)
     lg.rectangle("fill", 0,0,canW,canH)

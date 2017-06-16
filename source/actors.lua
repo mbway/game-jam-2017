@@ -335,16 +335,22 @@ end
 function Player:takeDamage(damage, source)
     if not debugMode then
         assets.player_hit[1]:play()
-        Actor.takeDamage(self, damage, source)
-        local dx, dy = getVectorTo(source, self)
+        
+        --Knockback
+        if self.invulnTimer <= 0 then
+            local dx, dy = getVectorTo(source, self)
 
-        local strength = math.random(200, 250)
-        if dx > 0 then
-            self.vx = strength
-        elseif dx < 0 then
-            self.vx = -strength
+            local strength = math.random(200, 250)
+            if dx > 0 then
+                self.vx = strength
+            elseif dx < 0 then
+                self.vx = -strength
+            end
+            self.vy = -120
         end
-        self.vy = -120
+        
+        Actor.takeDamage(self, damage, source)
+        
     end
 end
 function Player:die()
