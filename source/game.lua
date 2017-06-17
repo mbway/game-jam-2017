@@ -38,6 +38,9 @@ local routine = nil
 local text = nil
 local textRevealed = 0
 
+-- for speedruns
+local gameTimer = 0
+
 function game.load()
     love.resize() -- calculate canvas scaling
 
@@ -68,7 +71,6 @@ function game.load()
     map:bump_init(world)
 
     game.fadeout = 0
-    game.gameTimer = 0
 
     -- add room rectangles
     for i, o in ipairs(map.layers.Rooms.objects) do
@@ -251,7 +253,7 @@ function game.update(dt)
             cp:update(dt)
         end
         
-        game.gameTimer = game.gameTimer + dt
+        gameTimer = gameTimer + dt
         
     end
     for d in doorsList:each() do
@@ -325,7 +327,7 @@ function game.draw()
     player.playerHealthBar:draw()
 
     lg.setColor(240,240,240)
-    lg.print(string.format('%.1f', game.gameTimer), canW-22, 2)
+    lg.print(string.format('%.1f', gameTimer), canW-22, 2)
 
     lg.setColor(0,0,0,game.fadeout)
     lg.rectangle("fill", 0,0,canW,canH)
