@@ -11,32 +11,14 @@ local function makeQuads(img, quadw, quadh)
     return t
 end
 
-local function makeMask(img)
-    local srcPixels = img:getData()
-    local maskPixels = li.newImageData(srcPixels:getDimensions())
-    maskPixels:mapPixel(function(x,y,r,g,b,a)
-        r,g,b,a = srcPixels:getPixel(x,y)
-        return 255, 255, 255, (a>0 and 255 or 0)
-    end)
-    return lg.newImage(maskPixels)
-end
-
 local function makeSfx(str, count)
     local t = {}
     for i=1, count do
-        t[i] = la.newSource(str)
+        t[i] = la.newSource(str, 'static')
     end
     return t
 end
 
-
-local function makeSfx(str, count)
-    local t = {}
-    for i=1, count do
-        t[i] = la.newSource(str)
-    end
-    return t
-end
 
 local sfxIndices = setmetatable({}, {__mode='k'})
 
@@ -60,7 +42,7 @@ local function addSheet(prefix, name, quadw, quadh)
 end
 
 local function makeMusic(path)
-    local source = la.newSource(path)
+    local source = la.newSource(path, 'stream')
     source:setVolume(0)
     source:setLooping(true)
     source:play() -- all music layers play silently in the background

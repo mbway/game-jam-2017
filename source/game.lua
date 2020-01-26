@@ -193,6 +193,7 @@ function game.load()
     text = nil
     textRevealed = 0
 
+    lg.setCanvas()
 end
 
 function game.alreadyCollided(a, b)
