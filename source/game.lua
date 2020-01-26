@@ -82,9 +82,9 @@ function game.load()
             h = o.height,
             enemies = {},
             -- random color
-            colR = math.random(0, 255),
-            colG = math.random(0, 255),
-            colB = math.random(0, 255)
+            colR = math.random(),
+            colG = math.random(),
+            colB = math.random()
         }
         rooms:add(room, o.x, o.y, o.width, o.height)
     end
@@ -176,7 +176,7 @@ function game.load()
     -- reset to checkpoint
     signal.register('death', function(actor)
         if actor == player then
-            flux.to(game, 2.0, {fadeout = 255})
+            flux.to(game, 2, {fadeout = 1})
             :oncomplete(function()
                 game.load()
             end)
@@ -280,12 +280,13 @@ end
 function game.draw()
     lg.setCanvas(canvas)
     --lg.setCanvas()
-    lg.clear(37, 19, 19, 255)
-    lg.setColor(255, 255, 255, 255)
+    --lg.clear(37, 19, 19, 255)
+    lg.clear(0.145, 0.0745, 0.0745, 1)
+    lg.setColor(1, 1, 1, 1)
 
     game.cam:attach()
     --lg.translate(50, 100)
-    lg.setColor(255, 255, 255, 255)
+    lg.setColor(1, 1, 1, 1)
     map:draw(0, 0, 1, 1)
 
     for e in actorList:each() do
@@ -299,7 +300,7 @@ function game.draw()
     end
 
     if debugMode then
-        lg.setColor(255, 0, 0)
+        lg.setColor(1, 0, 0)
         bumpDebug.draw(world)
         map:bump_draw(world, 0, 0, 1, 1) -- tx, ty, sx, sy
         local items, len = rooms:getItems()
@@ -318,7 +319,7 @@ function game.draw()
         local x,y,w,h = 50, canH-28, canW-100, 20
         lg.setColor(0,0,0)
         lg.rectangle("fill", x,y,w,h)
-        lg.setColor(255,255,255)
+        lg.setColor(1,1,1)
         lg.setLineStyle("rough")
         lg.rectangle("line", x,y,w,h)
         lg.printf(text:sub(1,math.floor(textRevealed)), x+2, y, w-4)
@@ -327,14 +328,14 @@ function game.draw()
 
     player.playerHealthBar:draw()
 
-    lg.setColor(240,240,240)
+    lg.setColor(0.94,0.94,0.94)
     lg.print(string.format('%.1f', gameTimer), canW-22, 2)
 
     lg.setColor(0,0,0,game.fadeout)
     lg.rectangle("fill", 0,0,canW,canH)
 
     lg.setCanvas()
-    lg.setColor(255, 255, 255, 255)
+    lg.setColor(1, 1, 1, 1)
     lg.draw(canvas, canX, canY, 0, canSF, canSF)
 end
 
